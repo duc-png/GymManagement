@@ -1,0 +1,43 @@
+<UserControl x:Class="GymManagement.Views.PackageView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Membership Assignment" FontSize="24" FontWeight="SemiBold" Margin="0,0,0,16"/>
+
+        <Border Grid.Row="1" BorderBrush="#DDD" BorderThickness="1" Padding="12" Margin="0,0,0,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                    <TextBlock Text="Member"/>
+                    <ComboBox x:Name="MemberComboBox" DisplayMemberPath="FullName" SelectedValuePath="Id" Margin="0,4,0,0"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Margin="0,0,12,0">
+                    <TextBlock Text="Package"/>
+                    <ComboBox x:Name="PackageComboBox" DisplayMemberPath="PackageName" SelectedValuePath="Id" Margin="0,4,0,0"/>
+                </StackPanel>
+                <Button Grid.Column="2" Content="Assign" Width="100" Height="34" VerticalAlignment="Bottom" Click="AssignButton_Click"/>
+            </Grid>
+        </Border>
+
+        <DataGrid x:Name="AssignmentsGrid" Grid.Row="2" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Member" Width="*" Binding="{Binding Member.FullName}"/>
+                <DataGridTextColumn Header="Package" Width="*" Binding="{Binding PackageTemplate.PackageName}"/>
+                <DataGridTextColumn Header="Start" Width="130" Binding="{Binding StartDate}"/>
+                <DataGridTextColumn Header="End" Width="130" Binding="{Binding EndDate}"/>
+                <DataGridTextColumn Header="PT sessions" Width="110" Binding="{Binding RemainingPtsessions}"/>
+                <DataGridTextColumn Header="Status" Width="100" Binding="{Binding Status}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

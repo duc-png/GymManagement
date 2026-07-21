@@ -1,0 +1,22 @@
+## Build output
+bin/
+obj/
+
+## Visual Studio / Rider
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Local configuration and secrets
+.env
+.env.*
+appsettings.local.json
+.git2/
+.agents/
+.claude/
+
+## OS files
+.DS_Store
+Thumbs.db

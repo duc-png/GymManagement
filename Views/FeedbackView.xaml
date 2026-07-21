@@ -1,0 +1,27 @@
+<UserControl x:Class="GymManagement.Views.FeedbackView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Text="Feedback" FontSize="24" FontWeight="SemiBold" Margin="0,0,0,16"/>
+        <DockPanel Grid.Row="1" Margin="0,0,0,12">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                <Button Content="Detail" Width="90" Margin="8,0,0,0"/>
+                <Button Content="Resolve" Width="90" Margin="8,0,0,0"/>
+            </StackPanel>
+            <TextBox Height="34" Width="280" VerticalContentAlignment="Center" Padding="10,0" Text="Search feedback"/>
+        </DockPanel>
+        <DataGrid Grid.Row="2" AutoGenerateColumns="False" CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Member" Width="*" Binding="{Binding MemberName}"/>
+                <DataGridTextColumn Header="Rating" Width="120" Binding="{Binding Rating}"/>
+                <DataGridTextColumn Header="Content" Width="2*" Binding="{Binding Content}"/>
+                <DataGridTextColumn Header="Date" Width="160" Binding="{Binding CreatedAt}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

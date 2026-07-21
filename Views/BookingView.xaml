@@ -1,0 +1,28 @@
+<UserControl x:Class="GymManagement.Views.BookingView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Text="PT Bookings" FontSize="24" FontWeight="SemiBold" Margin="0,0,0,16"/>
+        <DockPanel Grid.Row="1" Margin="0,0,0,12">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                <Button Content="Add" Width="90" Margin="8,0,0,0"/>
+                <Button Content="Edit" Width="90" Margin="8,0,0,0"/>
+                <Button Content="Cancel" Width="90" Margin="8,0,0,0"/>
+            </StackPanel>
+            <TextBox Height="34" Width="280" VerticalContentAlignment="Center" Padding="10,0" Text="Search bookings"/>
+        </DockPanel>
+        <DataGrid Grid.Row="2" AutoGenerateColumns="False" CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Member" Width="*" Binding="{Binding MemberName}"/>
+                <DataGridTextColumn Header="Trainer" Width="*" Binding="{Binding TrainerName}"/>
+                <DataGridTextColumn Header="Time" Width="180" Binding="{Binding BookingTime}"/>
+                <DataGridTextColumn Header="Status" Width="120" Binding="{Binding Status}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>
