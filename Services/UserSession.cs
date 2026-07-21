@@ -19,7 +19,7 @@ public class UserSession
     public bool CanManagePos => IsInRole(UserRoles.Admin, UserRoles.Receptionist);
     public bool CanManageBookings => IsInRole(UserRoles.Admin, UserRoles.Receptionist);
     public bool CanManageEquipment => IsInRole(UserRoles.Admin);
-    public bool CanViewOwnPtBookings => IsInRole(UserRoles.Admin, UserRoles.Receptionist, UserRoles.Pt);
+    public bool CanViewOwnPtBookings => IsInRole(UserRoles.Admin, UserRoles.Receptionist, UserRoles.Pt, UserRoles.Member);
     public bool CanViewAnalytics => IsInRole(UserRoles.Admin);
 
     public void Login(User user) => CurrentUser = user;

@@ -56,7 +56,7 @@ public partial class MemberView : UserControl
     {
         if (MembersGrid.SelectedItem is not Member member)
         {
-            MessageBox.Show("Select a member first.", "Members", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Vui lòng chọn hội viên trước.", "Hội viên", MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
 
@@ -71,13 +71,13 @@ public partial class MemberView : UserControl
     private async void DeleteButton_Click(object sender, RoutedEventArgs e)
     {
         if (MembersGrid.SelectedItem is not Member selected) return;
-        if (MessageBox.Show($"Delete {selected.FullName}?", "Members", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
+        if (MessageBox.Show($"Bạn có chắc muốn xóa {selected.FullName} không?", "Hội viên", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
             return;
 
         var error = await _memberService.DeleteAsync(selected.Id);
         if (error != null)
         {
-            MessageBox.Show(error, "Members", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show(error, "Hội viên", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
         await LoadMembersAsync();
@@ -94,7 +94,7 @@ public partial class MemberView : UserControl
 
         if (error != null)
         {
-            MessageBox.Show(error, "Members", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show(error, "Hội viên", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
 

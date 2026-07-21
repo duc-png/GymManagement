@@ -24,31 +24,59 @@ public class BookingService
         return new(members, pts, bookings);
     }
 
-    public async Task<string?> CreateAsync(int currentUserId, string role, int memberId, int ptId, DateTime startTime, DateTime endTime)
+    public async Task<string?> CreateAsync(int currentUserId, string role, int memberId, int ptId,
+        string bookingType, int durationMinutes, DateTime startTime)
     {
-        if (endTime <= startTime) return "End time must be after start time.";
-        if (startTime < DateTime.Now) return "Booking time cannot be in the past.";
+        if (durationMinutes <= 0) return "Thời lượng buổi PT không hợp lệ.";
+        if (startTime < DateTime.Now) return "Không thể đặt lịch trong quá khứ.";
 
         using var db = new GymManagementDbContext();
         if (string.Equals(role, UserRoles.Member, StringComparison.OrdinalIgnoreCase))
         {
-            var ownMemberId = await db.Members.Where(x => x.UserId == currentUserId).Select(x => (int?)x.Id).SingleOrDefaultAsync();
-            if (ownMemberId == null) return "Member profile was not found.";
+            var ownMemberId = await db.Members.Where(x => x.UserId == currentUserId)
+                .Select(x => (int?)x.Id).SingleOrDefaultAsync();
+            if (ownMemberId == null) return "Không tìm thấy hồ sơ hội viên.";
             memberId = ownMemberId.Value;
         }
         else if (string.Equals(role, UserRoles.Pt, StringComparison.OrdinalIgnoreCase))
         {
-            return "PT accounts cannot create bookings.";
+            return "Tài khoản PT không thể tự tạo lịch đặt.";
         }
-        var bookingDate = DateOnly.FromDateTime(startTime);
-        var package = await db.MemberPackages.FirstOrDefaultAsync(x =>
-            x.MemberId == memberId && x.Status == "Active" && x.StartDate <= bookingDate && x.EndDate >= bookingDate);
-        if (package == null) return "Member does not have an active package for this date.";
-        if ((package.RemainingPtsessions ?? 0) <= 0) return "Member has no remaining PT sessions.";
+
+        var endTime = startTime.AddMinutes(durationMinutes);
+        int? memberPackageId = null;
+        decimal price = 0;
+        var paymentStatus = "Included";
+
+        if (bookingType == "Package")
+        {
+            var package = await db.MemberPackages.Include(x => x.PackageTemplate).FirstOrDefaultAsync(x =>
+                x.MemberId == memberId && x.Status == "Active"
+                && x.StartDate <= DateOnly.FromDateTime(startTime)
+                && x.EndDate >= DateOnly.FromDateTime(startTime)
+                && (x.RemainingPtsessions ?? 0) > 0);
+            if (package == null) return "Hội viên không có gói tập còn buổi PT trong ngày này.";
+            var configuredMinutes = package.PackageTemplate?.PtminutesPerSession ?? 0;
+            if (configuredMinutes > 0 && durationMinutes != configuredMinutes)
+                return $"Gói tập yêu cầu mỗi buổi PT dài {configuredMinutes} phút.";
+            memberPackageId = package.Id;
+        }
+        else if (bookingType == "Extra")
+        {
+            var pt = await db.Users.SingleOrDefaultAsync(x => x.Id == ptId && x.Role == UserRoles.Pt);
+            if (pt?.PthourlyRate == null || pt.PthourlyRate <= 0)
+                return "PT chưa được cấu hình giá thuê theo giờ.";
+            price = Math.Round(pt.PthourlyRate.Value * durationMinutes / 60m, 2);
+            paymentStatus = "Pending";
+        }
+        else
+        {
+            return "Loại booking không hợp lệ.";
+        }
 
         var overlaps = await db.Ptbookings.AnyAsync(x => x.Ptid == ptId && x.Status != "Cancelled"
             && startTime < x.EndTime && endTime > x.StartTime);
-        if (overlaps) return "PT already has a booking in this time range.";
+        if (overlaps) return "PT đã có lịch trong khoảng thời gian này.";
 
         db.Ptbookings.Add(new Ptbooking
         {
@@ -56,7 +84,11 @@ public class BookingService
             Ptid = ptId,
             StartTime = startTime,
             EndTime = endTime,
-            Status = "Pending"
+            Status = "Pending",
+            BookingType = bookingType,
+            Price = price,
+            PaymentStatus = paymentStatus,
+            MemberPackageId = memberPackageId
         });
         await db.SaveChangesAsync();
         return null;
@@ -64,21 +96,21 @@ public class BookingService
 
     public async Task<string?> UpdateStatusAsync(int bookingId, string newStatus)
     {
-        if (newStatus is not ("Completed" or "Cancelled")) return "Invalid booking status.";
+        if (newStatus is not ("Completed" or "Cancelled")) return "Trạng thái lịch không hợp lệ.";
 
         using var db = new GymManagementDbContext();
         await using var transaction = await db.Database.BeginTransactionAsync();
         var booking = await db.Ptbookings.FindAsync(bookingId);
-        if (booking == null) return "Booking was not found.";
-        if (booking.Status != "Pending") return "Only pending bookings can be updated.";
+        if (booking == null) return "Không tìm thấy lịch đặt.";
+        if (booking.Status != "Pending") return "Chỉ có thể cập nhật lịch đang chờ xử lý.";
+        if (newStatus == "Completed" && booking.PaymentStatus != "Included" && booking.PaymentStatus != "Paid")
+            return "Booking mua thêm chưa được thanh toán.";
 
-        if (newStatus == "Completed")
+        if (newStatus == "Completed" && booking.BookingType == "Package")
         {
-            var bookingDate = DateOnly.FromDateTime(booking.StartTime);
-            var package = await db.MemberPackages.FirstOrDefaultAsync(x => x.MemberId == booking.MemberId
-                && x.Status == "Active" && x.StartDate <= bookingDate && x.EndDate >= bookingDate
-                && (x.RemainingPtsessions ?? 0) > 0);
-            if (package == null) return "No active package with remaining PT sessions was found.";
+            var package = await db.MemberPackages.FindAsync(booking.MemberPackageId);
+            if (package == null || (package.RemainingPtsessions ?? 0) <= 0)
+                return "Không tìm thấy gói hoạt động còn buổi PT.";
             package.RemainingPtsessions--;
         }
 

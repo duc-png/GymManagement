@@ -22,17 +22,17 @@ public class ProfileService
     public async Task<string?> UpdateMemberProfileAsync(int userId, int memberId, string fullName, string phone, DateOnly? dateOfBirth, string? gender)
     {
         if (string.IsNullOrWhiteSpace(fullName) || string.IsNullOrWhiteSpace(phone))
-            return "Full name and phone are required.";
+            return "Họ tên và số điện thoại là bắt buộc.";
 
         using var db = new GymManagementDbContext();
         if (await db.Users.AnyAsync(x => x.PhoneNumber == phone && x.Id != userId)
             || await db.Members.AnyAsync(x => x.PhoneNumber == phone && x.Id != memberId))
-            return "Phone number is already in use.";
+            return "Số điện thoại đã được sử dụng.";
 
         await using var transaction = await db.Database.BeginTransactionAsync();
         var user = await db.Users.FindAsync(userId);
         var member = await db.Members.FindAsync(memberId);
-        if (user == null || member == null) return "Member profile was not found.";
+        if (user == null || member == null) return "Không tìm thấy hồ sơ hội viên.";
 
         user.FullName = member.FullName = fullName.Trim();
         user.PhoneNumber = member.PhoneNumber = phone.Trim();

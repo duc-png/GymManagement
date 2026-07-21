@@ -13,6 +13,8 @@
 
 ## 2. Membership Assignment
 
+Package templates should state the price, duration, PT entitlement and the length of each PT session. A sample catalog is available in `Data/20260721_SeedPackageTemplates.sql`.
+
 - Chọn member + chọn `PackageTemplate` → gắn gói tập
 - Tự động tính:
   - `StartDate` = ngày hôm nay

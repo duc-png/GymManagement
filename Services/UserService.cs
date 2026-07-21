@@ -23,7 +23,7 @@ public class UserService
             return (null, "Tài khoản đã bị khóa!");
 
         if (!UserRoles.IsKnown(user.Role))
-            return (null, "Account role is not configured.");
+            return (null, "Tài khoản chưa được cấu hình quyền truy cập.");
 
         return (user, null);
     }
@@ -43,7 +43,7 @@ public class UserService
             return "Số điện thoại đã được đăng ký!";
 
         if (await db.Members.AnyAsync(m => m.PhoneNumber == phoneNumber))
-            return "Phone number already belongs to a member.";
+            return "Số điện thoại đã thuộc về một hội viên.";
 
         await using var transaction = await db.Database.BeginTransactionAsync();
 
@@ -78,21 +78,21 @@ public class UserService
     public async Task<string?> ChangePasswordAsync(int userId, string currentPassword, string newPassword, string confirmation)
     {
         if (string.IsNullOrWhiteSpace(currentPassword) || string.IsNullOrWhiteSpace(newPassword))
-            return "Current and new passwords are required.";
+            return "Vui lòng nhập mật khẩu hiện tại và mật khẩu mới.";
 
         if (newPassword.Length < 6)
-            return "New password must contain at least 6 characters.";
+            return "Mật khẩu mới phải có ít nhất 6 ký tự.";
 
         if (newPassword != confirmation)
-            return "Password confirmation does not match.";
+            return "Mật khẩu xác nhận không khớp.";
 
         using var db = new GymManagementDbContext();
         var user = await db.Users.FindAsync(userId);
         if (user == null)
-            return "User account was not found.";
+            return "Không tìm thấy tài khoản người dùng.";
 
         if (!BCrypt.Net.BCrypt.Verify(currentPassword, user.Password))
-            return "Current password is incorrect.";
+            return "Mật khẩu hiện tại không chính xác.";
 
         user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
         await db.SaveChangesAsync();

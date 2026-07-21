@@ -41,7 +41,8 @@
 | Change password (BCrypt) | ✅ Done | `Views/ChangePasswordWindow.xaml` |
 | Purchase history | ✅ Done | `Views/PurchaseHistoryWindow.xaml` |
 | Cart | ⬜ Pending | Requires persistent cart design |
-| My packages / PT schedule | ⬜ Pending | Filter by `Members.UserId` |
+| My packages | ✅ Done | Filter all/active/expired; price and PT sessions |
+| My PT schedule | ✅ Done | Filter by `Members.UserId` |
 
 ## Module 2 — PT Booking System
 

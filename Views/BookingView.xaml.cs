@@ -5,6 +5,8 @@ using GymManagement.Services;
 
 namespace GymManagement.Views;
 
+public sealed record BookingTypeOption(string Value, string Label);
+
 public partial class BookingView : UserControl
 {
     private readonly BookingService _bookingService = new();
@@ -14,7 +16,36 @@ public partial class BookingView : UserControl
     {
         InitializeComponent();
         BookingDatePicker.SelectedDate = DateTime.Today.AddDays(1);
+        var timeSlots = Enumerable.Range(6 * 2, (22 - 6) * 2 + 1)
+            .Select(x => TimeSpan.FromMinutes(x * 30).ToString(@"hh\:mm"))
+            .ToList();
+        StartTimeComboBox.ItemsSource = timeSlots;
+        StartTimeComboBox.SelectedItem = "09:00";
+        DurationComboBox.ItemsSource = new[] { 30, 60, 90, 120 };
+        DurationComboBox.SelectedItem = 60;
+        BookingTypeComboBox.ItemsSource = new[]
+        {
+            new BookingTypeOption("Package", "Dùng gói"),
+            new BookingTypeOption("Extra", "Mua thêm")
+        };
+        BookingTypeComboBox.SelectedIndex = 0;
         Loaded += async (_, _) => await LoadAsync();
+    }
+
+    private void BookingOption_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        var type = BookingTypeComboBox.SelectedValue as string;
+        if (type != "Extra")
+        {
+            PricePreviewText.Text = "Đã bao gồm trong gói";
+            return;
+        }
+
+        var pt = PtComboBox.SelectedItem as User;
+        var minutes = DurationComboBox.SelectedItem as int? ?? 0;
+        PricePreviewText.Text = pt?.PthourlyRate is > 0
+            ? $"Giá: {pt.PthourlyRate.Value * minutes / 60m:N0}đ"
+            : "PT chưa có giá theo giờ";
     }
 
     private async Task LoadAsync()
@@ -55,16 +86,18 @@ public partial class BookingView : UserControl
     {
         if (MemberComboBox.SelectedValue is not int memberId || PtComboBox.SelectedValue is not int ptId
             || BookingDatePicker.SelectedDate is not DateTime date
-            || !TimeSpan.TryParse(StartTimeTextBox.Text, out var start)
-            || !TimeSpan.TryParse(EndTimeTextBox.Text, out var end))
+            || BookingTypeComboBox.SelectedValue is not string bookingType
+            || DurationComboBox.SelectedItem is not int durationMinutes
+            || !TimeSpan.TryParse(StartTimeComboBox.SelectedItem?.ToString(), out var start))
         {
-            MessageBox.Show("Select member, PT, date and valid times.", "Booking", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show("Vui lòng chọn hội viên, PT, ngày và nhập thời gian hợp lệ.", "Đặt lịch PT", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
         var user = UserSession.Instance.CurrentUser;
         if (user == null) return;
-        var error = await _bookingService.CreateAsync(user.Id, user.Role, memberId, ptId, date.Date.Add(start), date.Date.Add(end));
-        if (error != null) { MessageBox.Show(error, "Booking", MessageBoxButton.OK, MessageBoxImage.Warning); return; }
+        var error = await _bookingService.CreateAsync(
+            user.Id, user.Role, memberId, ptId, bookingType, durationMinutes, date.Date.Add(start));
+        if (error != null) { MessageBox.Show(error, "Đặt lịch PT", MessageBoxButton.OK, MessageBoxImage.Warning); return; }
         await LoadAsync();
     }
 
@@ -75,7 +108,7 @@ public partial class BookingView : UserControl
     {
         if (BookingsGrid.SelectedItem is not Ptbooking booking) return;
         var error = await _bookingService.UpdateStatusAsync(booking.Id, status);
-        if (error != null) { MessageBox.Show(error, "Booking", MessageBoxButton.OK, MessageBoxImage.Warning); return; }
+        if (error != null) { MessageBox.Show(error, "Đặt lịch PT", MessageBoxButton.OK, MessageBoxImage.Warning); return; }
         await LoadAsync();
     }
 }

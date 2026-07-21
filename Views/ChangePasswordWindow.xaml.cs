@@ -22,11 +22,11 @@ public partial class ChangePasswordWindow : Window
 
         if (error != null)
         {
-            MessageBox.Show(error, "Password", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show(error, "Đổi mật khẩu", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
 
-        MessageBox.Show("Password changed successfully.", "Password", MessageBoxButton.OK, MessageBoxImage.Information);
+        MessageBox.Show("Đổi mật khẩu thành công.", "Đổi mật khẩu", MessageBoxButton.OK, MessageBoxImage.Information);
         DialogResult = true;
     }
 }

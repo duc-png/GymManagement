@@ -14,11 +14,11 @@ public class MemberService
     public async Task<string?> SaveAsync(int? memberId, string fullName, string phone, string? email, string? gender)
     {
         if (string.IsNullOrWhiteSpace(fullName) || string.IsNullOrWhiteSpace(phone))
-            return "Full name and phone are required.";
+            return "Họ tên và số điện thoại là bắt buộc.";
 
         using var db = new GymManagementDbContext();
         if (await db.Members.AnyAsync(m => m.PhoneNumber == phone && m.Id != memberId))
-            return "Phone number already belongs to another member.";
+            return "Số điện thoại đã thuộc về hội viên khác.";
 
         if (memberId == null)
         {
@@ -35,7 +35,7 @@ public class MemberService
         else
         {
             var member = await db.Members.FindAsync(memberId.Value);
-            if (member == null) return "Member was not found.";
+            if (member == null) return "Không tìm thấy hội viên.";
 
             member.FullName = fullName.Trim();
             member.PhoneNumber = phone.Trim();
@@ -51,7 +51,7 @@ public class MemberService
     {
         using var db = new GymManagementDbContext();
         var member = await db.Members.FindAsync(memberId);
-        if (member == null) return "Member was not found.";
+        if (member == null) return "Không tìm thấy hội viên.";
 
         db.Members.Remove(member);
         await db.SaveChangesAsync();

@@ -21,7 +21,7 @@ public partial class ProfileWindow : Window
         var profile = await _profileService.GetMemberProfileAsync(userId.Value);
         if (profile == null)
         {
-            MessageBox.Show("Member profile was not found.", "Profile", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show("Không tìm thấy hồ sơ hội viên.", "Thông tin cá nhân", MessageBoxButton.OK, MessageBoxImage.Warning);
             Close();
             return;
         }
@@ -47,12 +47,12 @@ public partial class ProfileWindow : Window
             user.Id, _memberId, FullNameTextBox.Text, PhoneTextBox.Text, date, GenderComboBox.Text);
         if (error != null)
         {
-            MessageBox.Show(error, "Profile", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show(error, "Thông tin cá nhân", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
 
         user.FullName = FullNameTextBox.Text.Trim();
         user.PhoneNumber = PhoneTextBox.Text.Trim();
-        MessageBox.Show("Profile updated.", "Profile", MessageBoxButton.OK, MessageBoxImage.Information);
+        MessageBox.Show("Cập nhật thông tin thành công.", "Thông tin cá nhân", MessageBoxButton.OK, MessageBoxImage.Information);
     }
 }

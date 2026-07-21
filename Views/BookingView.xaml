@@ -7,16 +7,17 @@
         <Border Grid.Row="1" x:Name="CreatePanel" BorderBrush="#DDD" BorderThickness="1" Padding="12" Margin="0,0,0,12">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="150"/>
-                    <ColumnDefinition Width="100"/><ColumnDefinition Width="100"/><ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="125"/>
+                    <ColumnDefinition Width="135"/><ColumnDefinition Width="90"/><ColumnDefinition Width="90"/><ColumnDefinition Width="130"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0" Margin="0,0,8,0"><TextBlock Text="Specialty"/><ComboBox x:Name="SpecialtyComboBox" Margin="0,4,0,0" SelectionChanged="SpecialtyComboBox_SelectionChanged"/></StackPanel>
                 <StackPanel Grid.Column="1" Margin="0,0,8,0"><TextBlock Text="Member"/><ComboBox x:Name="MemberComboBox" DisplayMemberPath="FullName" SelectedValuePath="Id" Margin="0,4,0,0"/></StackPanel>
-                <StackPanel Grid.Column="2" Margin="0,0,8,0"><TextBlock Text="PT"/><ComboBox x:Name="PtComboBox" DisplayMemberPath="FullName" SelectedValuePath="Id" Margin="0,4,0,0"/></StackPanel>
-                <StackPanel Grid.Column="3" Margin="0,0,8,0"><TextBlock Text="Date"/><DatePicker x:Name="BookingDatePicker" Margin="0,4,0,0"/></StackPanel>
-                <StackPanel Grid.Column="4" Margin="0,0,8,0"><TextBlock Text="Start"/><TextBox x:Name="StartTimeTextBox" Text="09:00" Margin="0,4,0,0"/></StackPanel>
-                <StackPanel Grid.Column="5" Margin="0,0,8,0"><TextBlock Text="End"/><TextBox x:Name="EndTimeTextBox" Text="10:00" Margin="0,4,0,0"/></StackPanel>
-                <Button Grid.Column="6" Content="Book" Height="30" VerticalAlignment="Bottom" Click="BookButton_Click"/>
+                <StackPanel Grid.Column="2" Margin="0,0,8,0"><TextBlock Text="PT"/><ComboBox x:Name="PtComboBox" DisplayMemberPath="FullName" SelectedValuePath="Id" Margin="0,4,0,0" SelectionChanged="BookingOption_SelectionChanged"/></StackPanel>
+                <StackPanel Grid.Column="3" Margin="0,0,8,0"><TextBlock Text="Nguồn"/><ComboBox x:Name="BookingTypeComboBox" DisplayMemberPath="Label" SelectedValuePath="Value" Margin="0,4,0,0" SelectionChanged="BookingOption_SelectionChanged"/></StackPanel>
+                <StackPanel Grid.Column="4" Margin="0,0,8,0"><TextBlock Text="Ngày"/><DatePicker x:Name="BookingDatePicker" Margin="0,4,0,0"/></StackPanel>
+                <StackPanel Grid.Column="5" Margin="0,0,8,0"><TextBlock Text="Bắt đầu"/><ComboBox x:Name="StartTimeComboBox" Margin="0,4,0,0"/></StackPanel>
+                <StackPanel Grid.Column="6" Margin="0,0,8,0"><TextBlock Text="Số phút"/><ComboBox x:Name="DurationComboBox" Margin="0,4,0,0" SelectionChanged="BookingOption_SelectionChanged"/></StackPanel>
+                <StackPanel Grid.Column="7" VerticalAlignment="Bottom"><TextBlock x:Name="PricePreviewText" FontSize="11" TextWrapping="Wrap" Margin="0,0,0,4"/><Button Content="Đặt lịch" Height="30" Click="BookButton_Click"/></StackPanel>
             </Grid>
         </Border>
         <Grid Grid.Row="2">
@@ -32,6 +33,9 @@
                     <DataGridTextColumn Header="Start" Width="170" Binding="{Binding StartTime}"/>
                     <DataGridTextColumn Header="End" Width="170" Binding="{Binding EndTime}"/>
                     <DataGridTextColumn Header="Status" Width="110" Binding="{Binding Status}"/>
+                    <DataGridTextColumn Header="Nguồn" Width="90" Binding="{Binding BookingType}"/>
+                    <DataGridTextColumn Header="Giá" Width="120" Binding="{Binding Price}"/>
+                    <DataGridTextColumn Header="Thanh toán" Width="110" Binding="{Binding PaymentStatus}"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>

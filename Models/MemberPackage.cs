@@ -22,4 +22,6 @@ public partial class MemberPackage
     public virtual Member? Member { get; set; }
 
     public virtual PackageTemplate? PackageTemplate { get; set; }
+
+    public virtual ICollection<Ptbooking> Ptbookings { get; set; } = new List<Ptbooking>();
 }

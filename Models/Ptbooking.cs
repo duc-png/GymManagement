@@ -17,7 +17,17 @@ public partial class Ptbooking
 
     public string? Status { get; set; }
 
+    public string BookingType { get; set; } = null!;
+
+    public decimal Price { get; set; }
+
+    public string PaymentStatus { get; set; } = null!;
+
+    public int? MemberPackageId { get; set; }
+
     public virtual Member? Member { get; set; }
 
     public virtual User? Pt { get; set; }
+
+    public virtual MemberPackage? MemberPackage { get; set; }
 }

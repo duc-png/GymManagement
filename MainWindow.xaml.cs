@@ -43,14 +43,39 @@ namespace GymManagement
 
         private void PackagesButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!UserSession.Instance.CanManageMembers) return;
+            if (UserSession.Instance.IsInRole(UserRoles.Member))
+            {
+                OpenMyPackagesView();
+                return;
+            }
+            if (!UserSession.Instance.CanManageMembers)
+            {
+                MessageBox.Show("Bạn không có quyền quản lý gói tập.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
             ContentHost.Content = new PackageView();
+            WorkspaceBar.Visibility = Visibility.Visible;
+        }
+
+        public void OpenMyPackagesView()
+        {
+            ContentHost.Content = new MyPackagesView();
+            WorkspaceBar.Visibility = Visibility.Visible;
+        }
+
+        public void OpenPtPortfolioView()
+        {
+            ContentHost.Content = new PtPortfolioView();
             WorkspaceBar.Visibility = Visibility.Visible;
         }
 
         private void CheckInButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!UserSession.Instance.CanManageMembers) return;
+            if (!UserSession.Instance.CanManageMembers)
+            {
+                MessageBox.Show("Chỉ Admin và Receptionist được sử dụng check-in.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
             ContentHost.Content = new CheckInView();
             WorkspaceBar.Visibility = Visibility.Visible;
         }
@@ -63,7 +88,11 @@ namespace GymManagement
 
         private void BookingsButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!UserSession.Instance.CanViewOwnPtBookings) return;
+            if (!UserSession.Instance.CanViewOwnPtBookings)
+            {
+                MessageBox.Show("Bạn không có quyền xem lịch PT.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
             ContentHost.Content = new BookingView();
             WorkspaceBar.Visibility = Visibility.Visible;
         }

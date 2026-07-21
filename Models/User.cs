@@ -25,6 +25,8 @@ public partial class User
 
     public string? Ptstatus { get; set; }
 
+    public decimal? PthourlyRate { get; set; }
+
     public virtual ICollection<Feedback> Feedbacks { get; set; } = new List<Feedback>();
 
     public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();

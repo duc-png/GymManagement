@@ -44,6 +44,28 @@ public partial class HomeView : UserControl
     private void PurchaseHistoryMenuItem_Click(object sender, RoutedEventArgs e)
         => new PurchaseHistoryWindow { Owner = Window.GetWindow(this) }.ShowDialog();
 
+    private void MyPackagesMenuItem_Click(object sender, RoutedEventArgs e)
+        => (Window.GetWindow(this) as MainWindow)?.OpenMyPackagesView();
+
+    private void PtButton_Click(object sender, RoutedEventArgs e)
+        => (Window.GetWindow(this) as MainWindow)?.OpenPtPortfolioView();
+
+    private void GymInfoButton_Click(object sender, RoutedEventArgs e)
+        => MessageBox.Show("Gym Master mở cửa từ 06:00 đến 22:00 mỗi ngày.", "Thông tin phòng tập", MessageBoxButton.OK, MessageBoxImage.Information);
+
+    private void ToolsButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (!UserSession.Instance.IsLoggedIn)
+        {
+            MessageBox.Show("Vui lòng đăng nhập để sử dụng chức năng này.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+        (Window.GetWindow(this) as MainWindow)?.OpenBookingView();
+    }
+
+    private void ProductsButton_Click(object sender, RoutedEventArgs e)
+        => MessageBox.Show("Chức năng sản phẩm bổ sung đang được hoàn thiện.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+
     private void BookPtMenuItem_Click(object sender, RoutedEventArgs e)
         => (Window.GetWindow(this) as MainWindow)?.OpenBookingView();
 

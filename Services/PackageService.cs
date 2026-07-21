@@ -29,11 +29,11 @@ public class PackageService
     {
         using var db = new GymManagementDbContext();
         var package = await db.PackageTemplates.FindAsync(packageId);
-        if (package == null) return "Package was not found.";
+        if (package == null) return "Không tìm thấy gói tập.";
 
         var startDate = DateOnly.FromDateTime(DateTime.Today);
         if (await db.MemberPackages.AnyAsync(x => x.MemberId == memberId && x.Status == "Active" && x.EndDate >= startDate))
-            return "This member already has an active package.";
+            return "Hội viên đã có gói tập đang hoạt động.";
 
         db.MemberPackages.Add(new MemberPackage
         {

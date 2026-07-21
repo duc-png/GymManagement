@@ -275,6 +275,15 @@ public partial class GymManagementDbContext : DbContext
             entity.Property(e => e.Status)
                 .HasMaxLength(20)
                 .HasDefaultValue("Pending");
+            entity.Property(e => e.BookingType)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasDefaultValue("Package");
+            entity.Property(e => e.PaymentStatus)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasDefaultValue("Included");
+            entity.Property(e => e.Price).HasColumnType("decimal(18, 2)");
 
             entity.HasOne(d => d.Member).WithMany(p => p.Ptbookings)
                 .HasForeignKey(d => d.MemberId)
@@ -283,6 +292,10 @@ public partial class GymManagementDbContext : DbContext
             entity.HasOne(d => d.Pt).WithMany(p => p.Ptbookings)
                 .HasForeignKey(d => d.Ptid)
                 .HasConstraintName("FK__PTBookings__PTId__4222D4EF");
+
+            entity.HasOne(d => d.MemberPackage).WithMany(p => p.Ptbookings)
+                .HasForeignKey(d => d.MemberPackageId)
+                .HasConstraintName("FK_PTBookings_MemberPackages");
         });
 
         modelBuilder.Entity<Ptmedium>(entity =>
@@ -324,6 +337,9 @@ public partial class GymManagementDbContext : DbContext
             entity.Property(e => e.Ptstatus)
                 .HasMaxLength(20)
                 .HasColumnName("PTStatus");
+            entity.Property(e => e.PthourlyRate)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("PTHourlyRate");
             entity.Property(e => e.Role).HasMaxLength(20);
             entity.Property(e => e.Specialty).HasMaxLength(100);
             entity.Property(e => e.Status)

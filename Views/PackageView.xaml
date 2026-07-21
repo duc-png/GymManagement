@@ -23,7 +23,8 @@
                 </StackPanel>
                 <StackPanel Grid.Column="1" Margin="0,0,12,0">
                     <TextBlock Text="Package"/>
-                    <ComboBox x:Name="PackageComboBox" DisplayMemberPath="PackageName" SelectedValuePath="Id" Margin="0,4,0,0"/>
+                    <ComboBox x:Name="PackageComboBox" DisplayMemberPath="PackageName" SelectedValuePath="Id" Margin="0,4,0,0" SelectionChanged="PackageComboBox_SelectionChanged"/>
+                    <TextBlock x:Name="PackageDetailsText" Foreground="#555" TextWrapping="Wrap" Margin="0,8,0,0"/>
                 </StackPanel>
                 <Button Grid.Column="2" Content="Assign" Width="100" Height="34" VerticalAlignment="Bottom" Click="AssignButton_Click"/>
             </Grid>

@@ -1,0 +1,26 @@
+<UserControl x:Class="GymManagement.Views.MyPackagesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="24">
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+        <TextBlock Text="Gói tập của tôi" FontSize="28" FontWeight="SemiBold" Margin="0,0,0,16"/>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,14">
+            <TextBlock Text="Lọc trạng thái:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+            <ComboBox x:Name="StatusFilterComboBox" Width="180" SelectionChanged="StatusFilterComboBox_SelectionChanged">
+                <ComboBoxItem Content="Tất cả" Tag="All"/>
+                <ComboBoxItem Content="Còn hạn" Tag="Active"/>
+                <ComboBoxItem Content="Hết hạn" Tag="Expired"/>
+            </ComboBox>
+        </StackPanel>
+        <DataGrid x:Name="PackagesGrid" Grid.Row="2" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Gói tập" Width="*" Binding="{Binding PackageTemplate.PackageName}"/>
+                <DataGridTextColumn Header="Giá" Width="140" Binding="{Binding PackageTemplate.Price, StringFormat={}{0:N0} đ}"/>
+                <DataGridTextColumn Header="Bắt đầu" Width="120" Binding="{Binding StartDate}"/>
+                <DataGridTextColumn Header="Kết thúc" Width="120" Binding="{Binding EndDate}"/>
+                <DataGridTextColumn Header="Buổi PT còn lại" Width="130" Binding="{Binding RemainingPtsessions}"/>
+                <DataGridTextColumn Header="Trạng thái" Width="120" Binding="{Binding Status}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>
