@@ -45,11 +45,14 @@ namespace GymManagement
             var receptionist = role == UserRoles.Receptionist;
             var pt = role == UserRoles.Pt;
             var member = role == UserRoles.Member;
-            PackagesNavButton.Visibility = admin || receptionist || member ? Visibility.Visible : Visibility.Collapsed;
-            CheckInNavButton.Visibility = admin || receptionist ? Visibility.Visible : Visibility.Collapsed;
+
+            HomeNavButton.Content = admin ? "Dashboard" : "Home";
+            HomeNavButton.Visibility = admin || receptionist || pt || member ? Visibility.Visible : Visibility.Collapsed;
+            PackagesNavButton.Visibility = receptionist || member ? Visibility.Visible : Visibility.Collapsed;
+            CheckInNavButton.Visibility = receptionist ? Visibility.Visible : Visibility.Collapsed;
             PtPortfolioNavButton.Visibility = pt || member ? Visibility.Visible : Visibility.Collapsed;
-            BookingsNavButton.Visibility = admin || receptionist || pt || member ? Visibility.Visible : Visibility.Collapsed;
-            PosNavButton.Visibility = admin || receptionist ? Visibility.Visible : Visibility.Collapsed;
+            BookingsNavButton.Visibility = receptionist || pt || member ? Visibility.Visible : Visibility.Collapsed;
+            PosNavButton.Visibility = receptionist ? Visibility.Visible : Visibility.Collapsed;
             EquipmentNavButton.Visibility = admin || receptionist ? Visibility.Visible : Visibility.Collapsed;
             ProductsNavButton.Visibility = admin || receptionist ? Visibility.Visible : Visibility.Collapsed;
             AccountNavButton.Visibility = pt || member ? Visibility.Visible : Visibility.Collapsed;
@@ -57,7 +60,17 @@ namespace GymManagement
         }
 
         private void HomeButton_Click(object sender, RoutedEventArgs e)
-            => NavigateForRole(null);
+        {
+            if (UserSession.Instance.IsInRole(UserRoles.Admin))
+            {
+                ContentHost.Content = new DashboardView();
+                WorkspaceBar.Visibility = Visibility.Visible;
+                ConfigureWorkspace(UserRoles.Admin);
+                return;
+            }
+
+            NavigateForRole(null);
+        }
 
         private void PackagesButton_Click(object sender, RoutedEventArgs e)
         {
@@ -167,7 +180,12 @@ namespace GymManagement
         private void AccountButton_Click(object sender, RoutedEventArgs e)
         {
             if (UserSession.Instance.CurrentRole == UserRoles.Pt)
-                new PtProfileWindow { Owner = this }.ShowDialog();
+            {
+                var profileWindow = new PtProfileWindow { Owner = this };
+                profileWindow.ShowDialog();
+                if (profileWindow.WasUpdated && ContentHost.Content is PtPortfolioView)
+                    ContentHost.Content = new PtPortfolioView();
+            }
             else if (UserSession.Instance.CurrentRole == UserRoles.Member)
                 new ProfileWindow { Owner = this }.ShowDialog();
             else

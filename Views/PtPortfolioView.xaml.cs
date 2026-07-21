@@ -10,6 +10,9 @@ public partial class PtPortfolioView : UserControl
     public PtPortfolioView()
     {
         InitializeComponent();
-        Loaded += async (_, _) => PtList.ItemsSource = await _ptService.GetPortfolioAsync();
+        Loaded += async (_, _) => await ReloadAsync();
     }
+
+    public async Task ReloadAsync()
+        => PtList.ItemsSource = await _ptService.GetPortfolioAsync();
 }

@@ -16,7 +16,7 @@
 
 | Feature | Status | Ghi chú |
 |---------|--------|---------|
-| HomeView — TopBar + Hero + PT Cards + Reviews + Footer | ✅ Done | `Views/HomeView.xaml` |
+| HomeView — TopBar + Hero + PT Cards + Reviews + Footer | ✅ Done | `Views/HomeView.xaml`, `Services/HomeService.cs`; PT, feedback và số liệu tổng quan lấy từ database |
 | UserSession singleton | ✅ Done | `Services/UserSession.cs` |
 | LoginWindow — Tab Login + Tab Register | ✅ Done | `Views/LoginWindow.xaml` |
 | BCrypt password hash/verify | ✅ Done | `BCrypt.Net-Next 4.0.3` |
@@ -52,7 +52,7 @@
 | Smart Booking Calendar | ✅ Done | PT chỉ xem lịch dạy của chính mình; Member chỉ xem lịch đã thuê của chính mình; chọn ngày xem chi tiết |
 | Overlap Conflict Check | ✅ Done | `BookingService.CreateAsync` |
 | Session Deduction khi Completed | ✅ Done | `BookingService.UpdateStatusAsync` |
-| PT Self-Service Profile | ✅ Done | Update profile, specialty, status, avatar and password |
+| PT Self-Service Profile | ✅ Done | Update profile, specialty, status, avatar and password; portfolio tự làm mới và hiển thị ảnh |
 
 ## Module 3 — Equipment & Maintenance
 
@@ -75,7 +75,7 @@
 
 | Feature | Status | Ghi chú |
 |---------|--------|---------|
-| RBAC Login (BCrypt) + Route by Role | ✅ Done | `Services/UserSession.cs`, `Services/UserService.cs`, `MainWindow.xaml.cs`; role guards and role-based view routing |
+| RBAC Login (BCrypt) + Route by Role | ✅ Done | Admin vào Dashboard và chỉ hiện Dashboard/Thiết bị/Sản phẩm; các role khác dùng menu riêng |
 | Dual-Type Feedback | ✅ Done | PT và phòng tập; cả hai dùng số sao + comment |
 | Dashboard — Revenue Bar Chart | ✅ Done | `DashboardService`, `DashboardView`; grouped by payment method |
 | Dashboard — Package Pie Chart | ✅ Done | Package sales summary from invoice details |
