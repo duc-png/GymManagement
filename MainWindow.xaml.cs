@@ -36,6 +36,24 @@ namespace GymManagement
             ContentHost.Content = view;
             WorkspaceBar.Visibility = view is HomeView ? Visibility.Collapsed : Visibility.Visible;
             RoleText.Text = role == null ? string.Empty : $"Role: {role}";
+            ConfigureWorkspace(role);
+        }
+
+        private void ConfigureWorkspace(string? role)
+        {
+            var admin = role == UserRoles.Admin;
+            var receptionist = role == UserRoles.Receptionist;
+            var pt = role == UserRoles.Pt;
+            var member = role == UserRoles.Member;
+            PackagesNavButton.Visibility = admin || receptionist || member ? Visibility.Visible : Visibility.Collapsed;
+            CheckInNavButton.Visibility = admin || receptionist ? Visibility.Visible : Visibility.Collapsed;
+            PtPortfolioNavButton.Visibility = pt || member ? Visibility.Visible : Visibility.Collapsed;
+            BookingsNavButton.Visibility = admin || receptionist || pt || member ? Visibility.Visible : Visibility.Collapsed;
+            PosNavButton.Visibility = admin || receptionist ? Visibility.Visible : Visibility.Collapsed;
+            EquipmentNavButton.Visibility = admin || receptionist ? Visibility.Visible : Visibility.Collapsed;
+            ProductsNavButton.Visibility = admin || receptionist ? Visibility.Visible : Visibility.Collapsed;
+            AccountNavButton.Visibility = pt || member ? Visibility.Visible : Visibility.Collapsed;
+            PasswordNavButton.Visibility = pt || member ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void HomeButton_Click(object sender, RoutedEventArgs e)
@@ -61,24 +79,28 @@ namespace GymManagement
         {
             ContentHost.Content = new MyPackagesView();
             WorkspaceBar.Visibility = Visibility.Visible;
+            ConfigureWorkspace(UserSession.Instance.CurrentRole);
         }
 
         public void OpenMyCartView()
         {
             ContentHost.Content = new MyCartView();
             WorkspaceBar.Visibility = Visibility.Visible;
+            ConfigureWorkspace(UserSession.Instance.CurrentRole);
         }
 
         public void OpenFeedbackView()
         {
             ContentHost.Content = new FeedbackSubmitView();
             WorkspaceBar.Visibility = Visibility.Visible;
+            ConfigureWorkspace(UserSession.Instance.CurrentRole);
         }
 
         public void OpenPtPortfolioView()
         {
             ContentHost.Content = new PtPortfolioView();
             WorkspaceBar.Visibility = Visibility.Visible;
+            ConfigureWorkspace(UserSession.Instance.CurrentRole);
         }
 
         private void CheckInButton_Click(object sender, RoutedEventArgs e)
@@ -131,10 +153,38 @@ namespace GymManagement
             WorkspaceBar.Visibility = Visibility.Visible;
         }
 
+        private void ProductsButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!UserSession.Instance.CanManagePos)
+            {
+                MessageBox.Show("Chỉ Admin và Receptionist được xem danh sách sản phẩm.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            ContentHost.Content = new ProductView();
+            WorkspaceBar.Visibility = Visibility.Visible;
+        }
+
+        private void AccountButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (UserSession.Instance.CurrentRole == UserRoles.Pt)
+                new PtProfileWindow { Owner = this }.ShowDialog();
+            else if (UserSession.Instance.CurrentRole == UserRoles.Member)
+                new ProfileWindow { Owner = this }.ShowDialog();
+            else
+                MessageBox.Show("Chức năng tài khoản này dành cho PT và Member.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void ChangePasswordButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (UserSession.Instance.IsLoggedIn)
+                new ChangePasswordWindow { Owner = this }.ShowDialog();
+        }
+
         public void OpenBookingView()
         {
             ContentHost.Content = new BookingView();
             WorkspaceBar.Visibility = Visibility.Visible;
+            ConfigureWorkspace(UserSession.Instance.CurrentRole);
         }
 
         private void LogoutButton_Click(object sender, RoutedEventArgs e)

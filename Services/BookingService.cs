@@ -7,22 +7,61 @@ public sealed record BookingData(List<Member> Members, List<User> Pts, List<Ptbo
 
 public class BookingService
 {
-    public async Task<BookingData> GetDataAsync(int currentUserId, string role)
+    public async Task<BookingData> GetDataAsync(User currentUser)
     {
         using var db = new GymManagementDbContext();
-        var membersQuery = db.Members.AsNoTracking();
-        if (string.Equals(role, UserRoles.Member, StringComparison.OrdinalIgnoreCase))
-            membersQuery = membersQuery.Where(x => x.UserId == currentUserId);
-        var members = await membersQuery.OrderBy(x => x.FullName).ToListAsync();
-        var pts = await db.Users.AsNoTracking().Where(x => x.Role == UserRoles.Pt).OrderBy(x => x.FullName).ToListAsync();
-        var query = db.Ptbookings.AsNoTracking().Include(x => x.Member).Include(x => x.Pt).AsQueryable();
+        var role = currentUser.Role.Trim();
+
         if (string.Equals(role, UserRoles.Pt, StringComparison.OrdinalIgnoreCase))
-            query = query.Where(x => x.Ptid == currentUserId);
-        else if (string.Equals(role, UserRoles.Member, StringComparison.OrdinalIgnoreCase))
-            query = query.Where(x => x.Member != null && x.Member.UserId == currentUserId);
-        var bookings = await query.OrderByDescending(x => x.StartTime).ToListAsync();
-        return new(members, pts, bookings);
+        {
+            var ownTeachingSchedule = await BookingQuery(db)
+                .Where(x => x.Ptid == currentUser.Id)
+                .OrderByDescending(x => x.StartTime)
+                .ToListAsync();
+            return new(new List<Member>(), new List<User>(), ownTeachingSchedule);
+        }
+
+        if (string.Equals(role, UserRoles.Member, StringComparison.OrdinalIgnoreCase))
+        {
+            var ownMemberProfiles = await db.Members
+                .AsNoTracking()
+                .Where(x => x.UserId == currentUser.Id)
+                .OrderBy(x => x.FullName)
+                .ToListAsync();
+            var availablePts = await db.Users
+                .AsNoTracking()
+                .Where(x => x.Role == UserRoles.Pt)
+                .OrderBy(x => x.FullName)
+                .ToListAsync();
+            var ownBookedSchedule = await BookingQuery(db)
+                .Where(x => x.Member != null && x.Member.UserId == currentUser.Id)
+                .OrderByDescending(x => x.StartTime)
+                .ToListAsync();
+            return new(ownMemberProfiles, availablePts, ownBookedSchedule);
+        }
+
+        if (string.Equals(role, UserRoles.Admin, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(role, UserRoles.Receptionist, StringComparison.OrdinalIgnoreCase))
+        {
+            var members = await db.Members.AsNoTracking().OrderBy(x => x.FullName).ToListAsync();
+            var pts = await db.Users.AsNoTracking()
+                .Where(x => x.Role == UserRoles.Pt)
+                .OrderBy(x => x.FullName)
+                .ToListAsync();
+            var allBookings = await BookingQuery(db)
+                .OrderByDescending(x => x.StartTime)
+                .ToListAsync();
+            return new(members, pts, allBookings);
+        }
+
+        return new(new List<Member>(), new List<User>(), new List<Ptbooking>());
     }
+
+    private static IQueryable<Ptbooking> BookingQuery(GymManagementDbContext db)
+        => db.Ptbookings
+            .AsNoTracking()
+            .Include(x => x.Member)
+            .Include(x => x.Pt);
 
     public async Task<string?> CreateAsync(int currentUserId, string role, int memberId, int ptId,
         string bookingType, int durationMinutes, DateTime startTime)

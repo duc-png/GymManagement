@@ -35,13 +35,16 @@
     <DockPanel>
         <Border x:Name="WorkspaceBar" DockPanel.Dock="Top" Background="{StaticResource DarkBg}" Padding="12" Visibility="Collapsed">
             <StackPanel Orientation="Horizontal">
-                <Button Content="Home" Click="HomeButton_Click" Padding="16,6" Margin="0,0,8,0"/>
-                <Button Content="Packages" Click="PackagesButton_Click" Padding="16,6" Margin="0,0,8,0"/>
-                <Button Content="Check-in" Click="CheckInButton_Click" Padding="16,6" Margin="0,0,8,0"/>
-                <Button Content="PT Portfolio" Click="PtPortfolioButton_Click" Padding="16,6" Margin="0,0,8,0"/>
-                <Button Content="Bookings" Click="BookingsButton_Click" Padding="16,6" Margin="0,0,8,0"/>
-                <Button Content="POS" Click="PosButton_Click" Padding="16,6" Margin="0,0,8,0"/>
-                <Button Content="Thiết bị" Click="EquipmentButton_Click" Padding="16,6" Margin="0,0,8,0"/>
+                <Button x:Name="HomeNavButton" Content="Home" Click="HomeButton_Click" Padding="16,6" Margin="0,0,8,0"/>
+                <Button x:Name="PackagesNavButton" Content="Packages" Click="PackagesButton_Click" Padding="16,6" Margin="0,0,8,0"/>
+                <Button x:Name="CheckInNavButton" Content="Check-in" Click="CheckInButton_Click" Padding="16,6" Margin="0,0,8,0"/>
+                <Button x:Name="PtPortfolioNavButton" Content="PT Portfolio" Click="PtPortfolioButton_Click" Padding="16,6" Margin="0,0,8,0"/>
+                <Button x:Name="BookingsNavButton" Content="Lịch PT" Click="BookingsButton_Click" Padding="16,6" Margin="0,0,8,0"/>
+                <Button x:Name="PosNavButton" Content="POS" Click="PosButton_Click" Padding="16,6" Margin="0,0,8,0"/>
+                <Button x:Name="EquipmentNavButton" Content="Thiết bị" Click="EquipmentButton_Click" Padding="16,6" Margin="0,0,8,0"/>
+                <Button x:Name="ProductsNavButton" Content="Sản phẩm" Click="ProductsButton_Click" Padding="16,6" Margin="0,0,8,0"/>
+                <Button x:Name="AccountNavButton" Content="Tài khoản" Click="AccountButton_Click" Padding="16,6" Margin="0,0,8,0"/>
+                <Button x:Name="PasswordNavButton" Content="Đổi mật khẩu" Click="ChangePasswordButton_Click" Padding="16,6" Margin="0,0,8,0"/>
                 <TextBlock x:Name="RoleText" Foreground="White" VerticalAlignment="Center" Margin="8,0,20,0"/>
                 <Button Content="Logout" Click="LogoutButton_Click" Padding="16,6"/>
             </StackPanel>

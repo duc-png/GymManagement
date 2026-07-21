@@ -5,23 +5,48 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <TextBlock Text="Products" FontSize="24" FontWeight="SemiBold" Margin="0,0,0,16"/>
+
+        <TextBlock Text="Sản phẩm" FontSize="24" FontWeight="SemiBold" Margin="0,0,0,16"/>
+
         <DockPanel Grid.Row="1" Margin="0,0,0,12">
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                <Button Content="Add" Width="90" Margin="8,0,0,0"/>
-                <Button Content="Edit" Width="90" Margin="8,0,0,0"/>
-                <Button Content="Delete" Width="90" Margin="8,0,0,0"/>
+                <Button x:Name="AddButton" Content="Thêm" Width="80" Margin="8,0,0,0" Click="AddButton_Click"/>
+                <Button x:Name="EditButton" Content="Sửa" Width="80" Margin="8,0,0,0" Click="EditButton_Click"/>
+                <Button x:Name="DeleteButton" Content="Xóa" Width="80" Margin="8,0,0,0" Click="DeleteButton_Click"/>
             </StackPanel>
-            <TextBox Height="34" Width="280" VerticalContentAlignment="Center" Padding="10,0" Text="Search products"/>
+            <TextBox x:Name="SearchTextBox" Height="34" Width="280" Padding="10,0"
+                     VerticalContentAlignment="Center" TextChanged="SearchTextBox_TextChanged"/>
         </DockPanel>
-        <DataGrid Grid.Row="2" AutoGenerateColumns="False" CanUserAddRows="False">
+
+        <Border x:Name="EditorPanel" Grid.Row="2" Visibility="Collapsed"
+                BorderBrush="#DDD" BorderThickness="1" Padding="12" Margin="0,0,0,12">
+            <StackPanel Orientation="Horizontal">
+                <StackPanel Width="260" Margin="0,0,10,0">
+                    <TextBlock Text="Tên sản phẩm"/>
+                    <TextBox x:Name="NameTextBox" Margin="0,4,0,0"/>
+                </StackPanel>
+                <StackPanel Width="150" Margin="0,0,10,0">
+                    <TextBlock Text="Giá"/>
+                    <TextBox x:Name="PriceTextBox" Margin="0,4,0,0"/>
+                </StackPanel>
+                <StackPanel Width="130" Margin="0,0,10,0">
+                    <TextBlock Text="Tồn kho"/>
+                    <TextBox x:Name="StockTextBox" Margin="0,4,0,0"/>
+                </StackPanel>
+                <Button Content="Lưu" Width="80" Height="30" VerticalAlignment="Bottom" Click="SaveButton_Click"/>
+                <Button Content="Hủy" Width="80" Height="30" Margin="8,0,0,0" VerticalAlignment="Bottom" Click="CancelButton_Click"/>
+            </StackPanel>
+        </Border>
+
+        <DataGrid x:Name="ProductsGrid" Grid.Row="3" AutoGenerateColumns="False"
+                  IsReadOnly="True" CanUserAddRows="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Product" Width="*" Binding="{Binding Name}"/>
-                <DataGridTextColumn Header="Price" Width="160" Binding="{Binding Price}"/>
-                <DataGridTextColumn Header="Stock" Width="120" Binding="{Binding StockQuantity}"/>
-                <DataGridTextColumn Header="Status" Width="120" Binding="{Binding Status}"/>
+                <DataGridTextColumn Header="Sản phẩm" Width="*" Binding="{Binding ProductName}"/>
+                <DataGridTextColumn Header="Giá" Width="160" Binding="{Binding Price, StringFormat={}{0:N0} đ}"/>
+                <DataGridTextColumn Header="Tồn kho" Width="120" Binding="{Binding StockQuantity}"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

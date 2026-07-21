@@ -1,0 +1,15 @@
+<Window x:Class="GymManagement.Views.PtProfileWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Tài khoản PT" Width="520" Height="620" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+    <ScrollViewer><Grid Margin="24"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+        <TextBlock Text="Tài khoản PT" FontSize="24" FontWeight="SemiBold" Margin="0,0,0,18"/>
+        <StackPanel Grid.Row="1">
+            <Image x:Name="AvatarImage" Width="110" Height="110" Stretch="UniformToFill" HorizontalAlignment="Left"/>
+            <Button Content="Chọn ảnh" Width="90" Margin="0,8,0,16" HorizontalAlignment="Left" Click="ChooseAvatarButton_Click"/>
+            <TextBlock Text="Tên đăng nhập"/><TextBox x:Name="UsernameTextBox" IsReadOnly="True" Margin="0,4,0,12"/>
+            <TextBlock Text="Họ tên"/><TextBox x:Name="FullNameTextBox" Margin="0,4,0,12"/>
+            <TextBlock Text="Số điện thoại"/><TextBox x:Name="PhoneTextBox" Margin="0,4,0,12"/>
+            <TextBlock Text="Chuyên môn"/><TextBox x:Name="SpecialtyTextBox" Margin="0,4,0,12"/>
+            <TextBlock Text="Trạng thái PT"/><ComboBox x:Name="StatusComboBox" Margin="0,4,0,0"><ComboBoxItem Content="Available"/><ComboBoxItem Content="Busy"/><ComboBoxItem Content="OnLeave"/></ComboBox>
+        </StackPanel>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,18,0,0"><Button Content="Lưu" Width="90" Click="SaveButton_Click"/><Button Content="Đóng" Width="90" Margin="8,0,0,0" IsCancel="True"/></StackPanel>
+    </Grid></ScrollViewer>
+</Window>

@@ -49,9 +49,10 @@
 | Feature | Status | Ghi chú |
 |---------|--------|---------|
 | PT Portfolio UI | ✅ Done | `Services/PtService.cs`, `Views/PtPortfolioView.xaml` |
-| Smart Booking Calendar | ✅ Done | `Views/BookingView.xaml`, `Services/BookingService.cs`; filters PT by Specialty |
+| Smart Booking Calendar | ✅ Done | PT chỉ xem lịch dạy của chính mình; Member chỉ xem lịch đã thuê của chính mình; chọn ngày xem chi tiết |
 | Overlap Conflict Check | ✅ Done | `BookingService.CreateAsync` |
 | Session Deduction khi Completed | ✅ Done | `BookingService.UpdateStatusAsync` |
+| PT Self-Service Profile | ✅ Done | Update profile, specialty, status, avatar and password |
 
 ## Module 3 — Equipment & Maintenance
 
@@ -65,6 +66,7 @@
 
 | Feature | Status | Ghi chú |
 |---------|--------|---------|
+| Product Inventory CRUD | ✅ Done | Admin CRUD; Receptionist read-only |
 | Retail Cart + kiểm tra tồn kho | ✅ Done | `Services/PosService.cs`, `Views/PosView.xaml` |
 | Invoice Generator + DiscountPercent | ✅ Done | Transactional checkout with package and extra PT booking assignment |
 | PDF Export Preview | ✅ Done | `InvoicePreviewWindow`; Windows Print / Microsoft Print to PDF |

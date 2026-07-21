@@ -1,41 +1,202 @@
 <UserControl x:Class="GymManagement.Views.BookingView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <Style x:Key="CalendarNavigationButton" TargetType="Button">
+            <Setter Property="MinWidth" Value="38"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Margin" Value="4,0,0,0"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#D5D5D5"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+    </UserControl.Resources>
+
     <Grid Margin="16">
-        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-        <TextBlock Text="PT Bookings" FontSize="26" FontWeight="SemiBold" Margin="0,0,0,16"/>
-        <Border Grid.Row="1" x:Name="CreatePanel" BorderBrush="#DDD" BorderThickness="1" Padding="12" Margin="0,0,0,12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="220"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock x:Name="PageTitleText" Text="Lịch tập với PT" FontSize="26" FontWeight="SemiBold" Margin="0,0,0,14"/>
+
+        <Border Grid.Row="1" x:Name="CreatePanel" Background="White" BorderBrush="#DDDDDD" BorderThickness="1" Padding="12" Margin="0,0,0,12">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="125"/>
-                    <ColumnDefinition Width="135"/><ColumnDefinition Width="90"/><ColumnDefinition Width="90"/><ColumnDefinition Width="130"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="125"/>
+                    <ColumnDefinition Width="135"/>
+                    <ColumnDefinition Width="90"/>
+                    <ColumnDefinition Width="90"/>
+                    <ColumnDefinition Width="130"/>
                 </Grid.ColumnDefinitions>
-                <StackPanel Grid.Column="0" Margin="0,0,8,0"><TextBlock Text="Specialty"/><ComboBox x:Name="SpecialtyComboBox" Margin="0,4,0,0" SelectionChanged="SpecialtyComboBox_SelectionChanged"/></StackPanel>
-                <StackPanel Grid.Column="1" Margin="0,0,8,0"><TextBlock Text="Member"/><ComboBox x:Name="MemberComboBox" DisplayMemberPath="FullName" SelectedValuePath="Id" Margin="0,4,0,0"/></StackPanel>
-                <StackPanel Grid.Column="2" Margin="0,0,8,0"><TextBlock Text="PT"/><ComboBox x:Name="PtComboBox" DisplayMemberPath="FullName" SelectedValuePath="Id" Margin="0,4,0,0" SelectionChanged="BookingOption_SelectionChanged"/></StackPanel>
-                <StackPanel Grid.Column="3" Margin="0,0,8,0"><TextBlock Text="Nguồn"/><ComboBox x:Name="BookingTypeComboBox" DisplayMemberPath="Label" SelectedValuePath="Value" Margin="0,4,0,0" SelectionChanged="BookingOption_SelectionChanged"/></StackPanel>
-                <StackPanel Grid.Column="4" Margin="0,0,8,0"><TextBlock Text="Ngày"/><DatePicker x:Name="BookingDatePicker" Margin="0,4,0,0"/></StackPanel>
-                <StackPanel Grid.Column="5" Margin="0,0,8,0"><TextBlock Text="Bắt đầu"/><ComboBox x:Name="StartTimeComboBox" Margin="0,4,0,0"/></StackPanel>
-                <StackPanel Grid.Column="6" Margin="0,0,8,0"><TextBlock Text="Số phút"/><ComboBox x:Name="DurationComboBox" Margin="0,4,0,0" SelectionChanged="BookingOption_SelectionChanged"/></StackPanel>
-                <StackPanel Grid.Column="7" VerticalAlignment="Bottom"><TextBlock x:Name="PricePreviewText" FontSize="11" TextWrapping="Wrap" Margin="0,0,0,4"/><Button Content="Đặt lịch" Height="30" Click="BookButton_Click"/></StackPanel>
+                <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                    <TextBlock Text="Chuyên môn"/>
+                    <ComboBox x:Name="SpecialtyComboBox" Margin="0,4,0,0" SelectionChanged="SpecialtyComboBox_SelectionChanged"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Margin="0,0,8,0">
+                    <TextBlock Text="Hội viên"/>
+                    <ComboBox x:Name="MemberComboBox" DisplayMemberPath="FullName" SelectedValuePath="Id" Margin="0,4,0,0"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2" Margin="0,0,8,0">
+                    <TextBlock Text="Huấn luyện viên"/>
+                    <ComboBox x:Name="PtComboBox" DisplayMemberPath="FullName" SelectedValuePath="Id" Margin="0,4,0,0" SelectionChanged="BookingOption_SelectionChanged"/>
+                </StackPanel>
+                <StackPanel Grid.Column="3" Margin="0,0,8,0">
+                    <TextBlock Text="Nguồn"/>
+                    <ComboBox x:Name="BookingTypeComboBox" DisplayMemberPath="Label" SelectedValuePath="Value" Margin="0,4,0,0" SelectionChanged="BookingOption_SelectionChanged"/>
+                </StackPanel>
+                <StackPanel Grid.Column="4" Margin="0,0,8,0">
+                    <TextBlock Text="Ngày"/>
+                    <DatePicker x:Name="BookingDatePicker" Margin="0,4,0,0"/>
+                </StackPanel>
+                <StackPanel Grid.Column="5" Margin="0,0,8,0">
+                    <TextBlock Text="Bắt đầu"/>
+                    <ComboBox x:Name="StartTimeComboBox" Margin="0,4,0,0"/>
+                </StackPanel>
+                <StackPanel Grid.Column="6" Margin="0,0,8,0">
+                    <TextBlock Text="Số phút"/>
+                    <ComboBox x:Name="DurationComboBox" Margin="0,4,0,0" SelectionChanged="BookingOption_SelectionChanged"/>
+                </StackPanel>
+                <StackPanel Grid.Column="7" VerticalAlignment="Bottom">
+                    <TextBlock x:Name="PricePreviewText" FontSize="11" TextWrapping="Wrap" Margin="0,0,0,4"/>
+                    <Button Content="Đặt lịch" Height="30" Click="BookButton_Click"/>
+                </StackPanel>
             </Grid>
         </Border>
-        <Grid Grid.Row="2">
-            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,8">
-                <Button x:Name="CompleteButton" Content="Complete" Width="90" Click="CompleteButton_Click"/>
-                <Button x:Name="CancelBookingButton" Content="Cancel" Width="90" Margin="8,0,0,0" Click="CancelBookingButton_Click"/>
-            </StackPanel>
+
+        <Border Grid.Row="2" Background="White" BorderBrush="#DDDDDD" BorderThickness="1" Margin="0,0,0,12">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="48"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid Margin="10,0">
+                    <TextBlock x:Name="MonthTitleText" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <Button Content="Hôm nay" Padding="12,0" Style="{StaticResource CalendarNavigationButton}" Click="TodayButton_Click"/>
+                        <Button Content="‹" FontSize="20" ToolTip="Tháng trước" Style="{StaticResource CalendarNavigationButton}" Click="PreviousMonthButton_Click"/>
+                        <Button Content="›" FontSize="20" ToolTip="Tháng sau" Style="{StaticResource CalendarNavigationButton}" Click="NextMonthButton_Click"/>
+                    </StackPanel>
+                </Grid>
+
+                <UniformGrid Grid.Row="1" Columns="7" Background="#F5F6F8">
+                    <TextBlock Text="Thứ 2" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                    <TextBlock Text="Thứ 3" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                    <TextBlock Text="Thứ 4" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                    <TextBlock Text="Thứ 5" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                    <TextBlock Text="Thứ 6" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                    <TextBlock Text="Thứ 7" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                    <TextBlock Text="Chủ nhật" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                </UniformGrid>
+
+                <ItemsControl x:Name="CalendarDaysItemsControl" Grid.Row="2">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="7" Rows="6"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Tag="{Binding Date}" Click="CalendarDayButton_Click" Padding="0" BorderThickness="0" Background="Transparent" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+                                <Border BorderBrush="#E4E4E4" BorderThickness="0,0,1,1" Padding="5">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="White"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsCurrentMonth}" Value="False">
+                                                    <Setter Property="Background" Value="#F5F5F5"/>
+                                                    <Setter Property="Opacity" Value="0.55"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                    <Setter Property="Background" Value="#FFF0F2"/>
+                                                    <Setter Property="BorderBrush" Value="#DA4453"/>
+                                                    <Setter Property="BorderThickness" Value="2"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="22"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Border x:Name="DayNumberBadge" Width="22" Height="22" CornerRadius="11" HorizontalAlignment="Left" Background="Transparent">
+                                            <TextBlock Text="{Binding DayNumber}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                                        </Border>
+                                        <ItemsControl Grid.Row="1" ItemsSource="{Binding Entries}" Margin="0,2,0,0">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border x:Name="BookingEntryBorder" Background="#E8F2FF" CornerRadius="2" Padding="4,2" Margin="0,0,0,2">
+                                                        <TextBlock TextTrimming="CharacterEllipsis" FontSize="11">
+                                                            <Run Text="{Binding Time}" FontWeight="SemiBold"/><Run Text="  "/><Run Text="{Binding Participant}"/>
+                                                        </TextBlock>
+                                                    </Border>
+                                                    <DataTemplate.Triggers>
+                                                        <DataTrigger Binding="{Binding Status}" Value="Completed">
+                                                            <Setter TargetName="BookingEntryBorder" Property="Background" Value="#E5F6EA"/>
+                                                        </DataTrigger>
+                                                    </DataTemplate.Triggers>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <TextBlock Grid.Row="2" Foreground="#666666" FontSize="10">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding MoreCount}" Value="0">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                            <Run Text="+"/><Run Text="{Binding MoreCount}"/><Run Text=" buổi khác"/>
+                                        </TextBlock>
+                                    </Grid>
+                                </Border>
+                            </Button>
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding IsToday}" Value="True">
+                                    <Setter TargetName="DayNumberBadge" Property="Background" Value="#DA4453"/>
+                                    <Setter TargetName="DayNumberBadge" Property="TextElement.Foreground" Value="White"/>
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid Margin="0,0,0,8">
+                <TextBlock x:Name="SelectedDateTitleText" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button x:Name="CompleteButton" Content="Hoàn thành" Width="100" Height="30" Click="CompleteButton_Click"/>
+                    <Button x:Name="CancelBookingButton" Content="Hủy lịch" Width="90" Height="30" Margin="8,0,0,0" Click="CancelBookingButton_Click"/>
+                </StackPanel>
+            </Grid>
             <DataGrid x:Name="BookingsGrid" Grid.Row="1" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Member" Width="*" Binding="{Binding Member.FullName}"/>
-                    <DataGridTextColumn Header="PT" Width="*" Binding="{Binding Pt.FullName}"/>
-                    <DataGridTextColumn Header="Start" Width="170" Binding="{Binding StartTime}"/>
-                    <DataGridTextColumn Header="End" Width="170" Binding="{Binding EndTime}"/>
-                    <DataGridTextColumn Header="Status" Width="110" Binding="{Binding Status}"/>
+                    <DataGridTextColumn x:Name="MemberColumn" Header="Hội viên" Width="*" Binding="{Binding Member.FullName}"/>
+                    <DataGridTextColumn x:Name="PtColumn" Header="PT" Width="*" Binding="{Binding Pt.FullName}"/>
+                    <DataGridTextColumn Header="Bắt đầu" Width="135" Binding="{Binding StartTime, StringFormat=dd/MM/yyyy HH:mm}"/>
+                    <DataGridTextColumn Header="Kết thúc" Width="135" Binding="{Binding EndTime, StringFormat=dd/MM/yyyy HH:mm}"/>
+                    <DataGridTextColumn Header="Trạng thái" Width="100" Binding="{Binding Status}"/>
                     <DataGridTextColumn Header="Nguồn" Width="90" Binding="{Binding BookingType}"/>
-                    <DataGridTextColumn Header="Giá" Width="120" Binding="{Binding Price}"/>
-                    <DataGridTextColumn Header="Thanh toán" Width="110" Binding="{Binding PaymentStatus}"/>
+                    <DataGridTextColumn Header="Giá" Width="110" Binding="{Binding Price, StringFormat=N0}"/>
+                    <DataGridTextColumn Header="Thanh toán" Width="105" Binding="{Binding PaymentStatus}"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
