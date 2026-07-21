@@ -80,6 +80,7 @@
                                 <MenuItem Header="Đổi mật khẩu" Click="ChangePasswordMenuItem_Click"/>
                                 <MenuItem Header="Lịch sử mua hàng" Click="PurchaseHistoryMenuItem_Click"/>
                                 <MenuItem Header="Gói tập của tôi" Click="MyPackagesMenuItem_Click"/>
+                                <MenuItem Header="Giỏ hàng" Click="MyCartMenuItem_Click"/>
                                 <MenuItem Header="Đặt lịch PT" Click="BookPtMenuItem_Click"/>
                                 <Separator/>
                                 <MenuItem Header="Đăng xuất" Click="LogoutMenuItem_Click"/>

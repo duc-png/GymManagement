@@ -1,0 +1,32 @@
+<UserControl x:Class="GymManagement.Views.PosView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="16">
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+        <TextBlock Text="POS / Thanh toán" FontSize="26" FontWeight="SemiBold" Margin="0,0,0,16"/>
+        <Grid Grid.Row="1" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="150"/><ColumnDefinition Width="150"/></Grid.ColumnDefinitions>
+            <StackPanel Margin="0,0,8,0"><TextBlock Text="Sản phẩm"/><ComboBox x:Name="ProductComboBox" DisplayMemberPath="ProductName" SelectedValuePath="Id" Margin="0,4,0,0"/></StackPanel>
+            <Button Grid.Column="1" Content="Thêm sản phẩm" Height="30" VerticalAlignment="Bottom" Click="AddProductButton_Click"/>
+            <StackPanel Grid.Column="2" Margin="8,0,8,0"><TextBlock Text="Gói tập"/><ComboBox x:Name="PackageComboBox" DisplayMemberPath="PackageName" SelectedValuePath="Id" Margin="0,4,0,0"/></StackPanel>
+            <Button Grid.Column="3" Content="Thêm gói" Height="30" VerticalAlignment="Bottom" Click="AddPackageButton_Click"/>
+            <StackPanel Grid.Column="4" Margin="8,0,0,0"><TextBlock Text="Hội viên"/><ComboBox x:Name="MemberComboBox" DisplayMemberPath="FullName" SelectedValuePath="Id" Margin="0,4,0,0" SelectionChanged="MemberComboBox_SelectionChanged"/></StackPanel>
+        </Grid>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+            <DataGrid x:Name="CartGrid" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" Margin="0,0,12,0">
+                <DataGrid.Columns><DataGridTextColumn Header="Loại" Width="100" Binding="{Binding ItemType}"/><DataGridTextColumn Header="Tên" Width="*" Binding="{Binding ItemName}"/><DataGridTextColumn Header="Đơn giá" Width="140" Binding="{Binding UnitPrice, StringFormat={}{0:N0} đ}"/></DataGrid.Columns>
+            </DataGrid>
+            <Border Grid.Column="1" BorderBrush="#DDD" BorderThickness="1" Padding="16">
+                <StackPanel>
+                    <TextBlock Text="Thanh toán" FontSize="20" FontWeight="SemiBold"/>
+                    <TextBlock x:Name="TotalText" Text="Tổng: 0đ" FontSize="18" Margin="0,20,0,12"/>
+                    <TextBlock Text="Giảm giá (%)"/><TextBox x:Name="DiscountTextBox" Text="0" Margin="0,4,0,12" TextChanged="DiscountTextBox_TextChanged"/>
+                    <TextBlock Text="Phương thức"/><ComboBox x:Name="PaymentMethodComboBox" Margin="0,4,0,16"><ComboBoxItem Content="Tiền mặt" Tag="Cash"/><ComboBoxItem Content="Thẻ" Tag="Card"/><ComboBoxItem Content="Chuyển khoản" Tag="Transfer"/><ComboBoxItem Content="MoMo" Tag="MoMo"/></ComboBox>
+                    <TextBlock Text="PT mua thêm chưa thanh toán" Margin="0,12,0,4"/><ComboBox x:Name="ExtraBookingComboBox" DisplayMemberPath="StartTime" Margin="0,0,0,8"/><Button Content="Thêm booking PT" Height="30" Click="AddBookingButton_Click"/>
+                    <Button Content="Thanh toán" Height="38" Margin="0,12,0,0" Click="CheckoutButton_Click"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

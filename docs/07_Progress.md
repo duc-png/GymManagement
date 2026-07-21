@@ -40,7 +40,7 @@
 | Personal profile (email read-only) | ✅ Done | `Views/ProfileWindow.xaml` |
 | Change password (BCrypt) | ✅ Done | `Views/ChangePasswordWindow.xaml` |
 | Purchase history | ✅ Done | `Views/PurchaseHistoryWindow.xaml` |
-| Cart | ⬜ Pending | Requires persistent cart design |
+| Cart | ✅ Done | Persistent SQL cart; package and extra PT booking checkout |
 | My packages | ✅ Done | Filter all/active/expired; price and PT sessions |
 | My PT schedule | ✅ Done | Filter by `Members.UserId` |
 
@@ -65,9 +65,9 @@
 
 | Feature | Status | Ghi chú |
 |---------|--------|---------|
-| Retail Cart + kiểm tra tồn kho | ⬜ Pending | |
-| Invoice Generator + DiscountPercent | ⬜ Pending | |
-| PDF Export Preview | ⬜ Pending | |
+| Retail Cart + kiểm tra tồn kho | ✅ Done | `Services/PosService.cs`, `Views/PosView.xaml` |
+| Invoice Generator + DiscountPercent | ✅ Done | Transactional checkout with package and extra PT booking assignment |
+| PDF Export Preview | ✅ Done | `InvoicePreviewWindow`; Windows Print / Microsoft Print to PDF |
 
 ## Module 5 — Analytics & Access Control
 

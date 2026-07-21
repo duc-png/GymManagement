@@ -63,6 +63,12 @@ namespace GymManagement
             WorkspaceBar.Visibility = Visibility.Visible;
         }
 
+        public void OpenMyCartView()
+        {
+            ContentHost.Content = new MyCartView();
+            WorkspaceBar.Visibility = Visibility.Visible;
+        }
+
         public void OpenPtPortfolioView()
         {
             ContentHost.Content = new PtPortfolioView();
@@ -94,6 +100,17 @@ namespace GymManagement
                 return;
             }
             ContentHost.Content = new BookingView();
+            WorkspaceBar.Visibility = Visibility.Visible;
+        }
+
+        private void PosButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!UserSession.Instance.CanManagePos)
+            {
+                MessageBox.Show("Chỉ Admin và Receptionist được sử dụng POS.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            ContentHost.Content = new PosView();
             WorkspaceBar.Visibility = Visibility.Visible;
         }
 

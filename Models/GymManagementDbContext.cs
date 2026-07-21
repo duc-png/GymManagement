@@ -17,6 +17,7 @@ public partial class GymManagementDbContext : DbContext
     }
 
     public virtual DbSet<CheckInHistory> CheckInHistories { get; set; }
+    public virtual DbSet<CartItem> CartItems { get; set; }
 
     public virtual DbSet<Equipment> Equipments { get; set; }
 
@@ -215,6 +216,17 @@ public partial class GymManagementDbContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK_Members_Users");
+        });
+
+        modelBuilder.Entity<CartItem>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.ToTable("CartItems");
+            entity.Property(e => e.ItemType).HasMaxLength(20).IsUnicode(false);
+            entity.Property(e => e.ItemName).HasMaxLength(150);
+            entity.Property(e => e.UnitPrice).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("(getdate())").HasColumnType("datetime");
+            entity.HasOne<User>().WithMany().HasForeignKey(e => e.UserId).OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<MemberPackage>(entity =>

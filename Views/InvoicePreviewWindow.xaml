@@ -1,0 +1,34 @@
+<Window x:Class="GymManagement.Views.InvoicePreviewWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Xem trước hóa đơn" Width="760" Height="780" WindowStartupLocation="CenterOwner">
+    <DockPanel Margin="20">
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
+            <Button Content="In / Xuất PDF" Width="130" Height="36" Click="PrintButton_Click"/>
+            <Button Content="Đóng" Width="90" Height="36" Margin="8,0,0,0" IsCancel="True"/>
+        </StackPanel>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <Border x:Name="InvoicePanel" Background="White" BorderBrush="#DDD" BorderThickness="1" Padding="32">
+                <StackPanel>
+                    <TextBlock Text="GYM MASTER" FontSize="28" FontWeight="Bold" HorizontalAlignment="Center"/>
+                    <TextBlock Text="HÓA ĐƠN THANH TOÁN" FontSize="20" FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,8,0,24"/>
+                    <Grid Margin="0,0,0,18">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                        <StackPanel><TextBlock Text="Mã hóa đơn" FontWeight="SemiBold"/><TextBlock x:Name="InvoiceCodeText"/><TextBlock Text="Hội viên" FontWeight="SemiBold" Margin="0,10,0,0"/><TextBlock x:Name="MemberText"/></StackPanel>
+                        <StackPanel Grid.Column="1"><TextBlock Text="Ngày tạo" FontWeight="SemiBold"/><TextBlock x:Name="CreatedDateText"/><TextBlock Text="Nhân viên" FontWeight="SemiBold" Margin="0,10,0,0"/><TextBlock x:Name="CashierText"/></StackPanel>
+                    </Grid>
+                    <DataGrid x:Name="DetailsGrid" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" Height="280">
+                        <DataGrid.Columns><DataGridTextColumn Header="Nội dung" Width="*" Binding="{Binding ItemName}"/><DataGridTextColumn Header="SL" Width="55" Binding="{Binding Quantity}"/><DataGridTextColumn Header="Đơn giá" Width="120" Binding="{Binding UnitPrice, StringFormat={}{0:N0}}"/><DataGridTextColumn Header="Thành tiền" Width="130" Binding="{Binding TotalPrice, StringFormat={}{0:N0}}"/></DataGrid.Columns>
+                    </DataGrid>
+                    <StackPanel HorizontalAlignment="Right" Width="260" Margin="0,20,0,0">
+                        <TextBlock x:Name="TotalText" TextAlignment="Right"/>
+                        <TextBlock x:Name="DiscountText" TextAlignment="Right" Margin="0,6,0,0"/>
+                        <TextBlock x:Name="FinalAmountText" TextAlignment="Right" FontSize="18" FontWeight="Bold" Margin="0,8,0,0"/>
+                        <TextBlock x:Name="PaymentMethodText" TextAlignment="Right" Margin="0,8,0,0"/>
+                    </StackPanel>
+                    <TextBlock Text="Cảm ơn quý khách!" HorizontalAlignment="Center" Margin="0,30,0,0" FontStyle="Italic"/>
+                </StackPanel>
+            </Border>
+        </ScrollViewer>
+    </DockPanel>
+</Window>

@@ -42,3 +42,4 @@ Package templates should state the price, duration, PT entitlement and the lengt
 - Một member có thể có nhiều `MemberPackages` nhưng chỉ 1 cái `Active` tại một thời điểm
 - `Status` enum: `Active | Expiring | Expired`
 - `Expiring`: còn ≤ 7 ngày trước `EndDate`
+- Không cho mua/gán package mới khi member đang có package còn hạn; chỉ cho phép package mới sau khi package hiện tại hết hạn.

@@ -40,6 +40,7 @@
                 <Button Content="Check-in" Click="CheckInButton_Click" Padding="16,6" Margin="0,0,8,0"/>
                 <Button Content="PT Portfolio" Click="PtPortfolioButton_Click" Padding="16,6" Margin="0,0,8,0"/>
                 <Button Content="Bookings" Click="BookingsButton_Click" Padding="16,6" Margin="0,0,8,0"/>
+                <Button Content="POS" Click="PosButton_Click" Padding="16,6" Margin="0,0,8,0"/>
                 <TextBlock x:Name="RoleText" Foreground="White" VerticalAlignment="Center" Margin="8,0,20,0"/>
                 <Button Content="Logout" Click="LogoutButton_Click" Padding="16,6"/>
             </StackPanel>

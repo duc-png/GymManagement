@@ -5,6 +5,16 @@ namespace GymManagement.Services;
 
 public class InvoiceService
 {
+    public async Task<Invoice?> GetInvoiceAsync(int invoiceId)
+    {
+        using var db = new GymManagementDbContext();
+        return await db.Invoices.AsNoTracking()
+            .Include(x => x.Member)
+            .Include(x => x.User)
+            .Include(x => x.InvoiceDetails)
+            .SingleOrDefaultAsync(x => x.Id == invoiceId);
+    }
+
     public async Task<List<Invoice>> GetMemberPurchaseHistoryAsync(int userId)
     {
         using var db = new GymManagementDbContext();
