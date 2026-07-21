@@ -1,6 +1,6 @@
 # Module 2: PT Booking System
 
-**Actors:** Admin, Receptionist (tạo/quản lý), PT (chỉ xem)
+**Actors:** Member (tự đặt lịch của mình), Admin/Receptionist (đặt hộ/quản lý), PT (chỉ xem lịch của mình)
 **Tables:** `PTBookings`, `Users` (role=PT), `PTMedia`, `MemberPackages`
 
 ---

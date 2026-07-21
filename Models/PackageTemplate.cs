@@ -17,5 +17,7 @@ public partial class PackageTemplate
 
     public int? PtminutesPerSession { get; set; }
 
+    public int? PtSessions { get; set; }
+
     public virtual ICollection<MemberPackage> MemberPackages { get; set; } = new List<MemberPackage>();
 }

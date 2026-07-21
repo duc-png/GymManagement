@@ -1,12 +1,12 @@
 using System.Windows;
-using GymManagement.Models;
 using GymManagement.Services;
-using Microsoft.EntityFrameworkCore;
 
 namespace GymManagement.Views;
 
 public partial class PurchaseHistoryWindow : Window
 {
+    private readonly InvoiceService _invoiceService = new();
+
     public PurchaseHistoryWindow()
     {
         InitializeComponent();
@@ -17,12 +17,6 @@ public partial class PurchaseHistoryWindow : Window
     {
         var userId = UserSession.Instance.CurrentUser?.Id;
         if (userId == null) { Close(); return; }
-
-        using var db = new GymManagementDbContext();
-        InvoicesGrid.ItemsSource = await db.Invoices
-            .AsNoTracking()
-            .Where(i => i.Member != null && i.Member.UserId == userId)
-            .OrderByDescending(i => i.CreatedDate)
-            .ToListAsync();
+        InvoicesGrid.ItemsSource = await _invoiceService.GetMemberPurchaseHistoryAsync(userId.Value);
     }
 }

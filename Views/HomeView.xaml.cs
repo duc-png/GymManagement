@@ -44,6 +44,9 @@ public partial class HomeView : UserControl
     private void PurchaseHistoryMenuItem_Click(object sender, RoutedEventArgs e)
         => new PurchaseHistoryWindow { Owner = Window.GetWindow(this) }.ShowDialog();
 
+    private void BookPtMenuItem_Click(object sender, RoutedEventArgs e)
+        => (Window.GetWindow(this) as MainWindow)?.OpenBookingView();
+
     private void LogoutMenuItem_Click(object sender, RoutedEventArgs e)
     {
         UserSession.Instance.Logout();

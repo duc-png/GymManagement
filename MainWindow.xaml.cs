@@ -48,6 +48,32 @@ namespace GymManagement
             WorkspaceBar.Visibility = Visibility.Visible;
         }
 
+        private void CheckInButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!UserSession.Instance.CanManageMembers) return;
+            ContentHost.Content = new CheckInView();
+            WorkspaceBar.Visibility = Visibility.Visible;
+        }
+
+        private void PtPortfolioButton_Click(object sender, RoutedEventArgs e)
+        {
+            ContentHost.Content = new PtPortfolioView();
+            WorkspaceBar.Visibility = Visibility.Visible;
+        }
+
+        private void BookingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!UserSession.Instance.CanViewOwnPtBookings) return;
+            ContentHost.Content = new BookingView();
+            WorkspaceBar.Visibility = Visibility.Visible;
+        }
+
+        public void OpenBookingView()
+        {
+            ContentHost.Content = new BookingView();
+            WorkspaceBar.Visibility = Visibility.Visible;
+        }
+
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
             UserSession.Instance.Logout();

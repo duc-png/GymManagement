@@ -79,6 +79,7 @@
                                 <MenuItem Header="Profile" Click="ProfileMenuItem_Click"/>
                                 <MenuItem Header="Change password" Click="ChangePasswordMenuItem_Click"/>
                                 <MenuItem Header="Purchase history" Click="PurchaseHistoryMenuItem_Click"/>
+                                <MenuItem Header="Book PT" Click="BookPtMenuItem_Click"/>
                                 <Separator/>
                                 <MenuItem Header="Logout" Click="LogoutMenuItem_Click"/>
                             </ContextMenu>

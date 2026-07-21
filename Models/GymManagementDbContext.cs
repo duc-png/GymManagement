@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace GymManagement.Models;
 
@@ -42,9 +43,14 @@ public partial class GymManagementDbContext : DbContext
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
     {
-        var connectionString = Environment.GetEnvironmentVariable("GYM_DB_CONNECTION");
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(AppContext.BaseDirectory)
+            .AddJsonFile("appsettings.local.json", optional: true)
+            .Build();
+
+        var connectionString = configuration.GetConnectionString("DefaultConnection")
+            ?? Environment.GetEnvironmentVariable("GYM_DB_CONNECTION");
         if (string.IsNullOrWhiteSpace(connectionString))
             throw new InvalidOperationException("GYM_DB_CONNECTION environment variable is not configured.");
 
@@ -244,6 +250,8 @@ public partial class GymManagementDbContext : DbContext
             entity.Property(e => e.PtminutesPerSession)
                 .HasDefaultValue(0)
                 .HasColumnName("PTMinutesPerSession");
+            entity.Property(e => e.PtSessions)
+                .HasColumnName("PTSessions");
         });
 
         modelBuilder.Entity<Product>(entity =>

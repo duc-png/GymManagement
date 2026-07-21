@@ -30,7 +30,7 @@
 |---------|--------|---------|
 | Profile CRUD (Add/Edit/Delete/Search) | ✅ Done | `Views/MemberView.xaml`, `Views/MemberView.xaml.cs` |
 | Membership Assignment (gắn gói tập) | ✅ Done | `Views/PackageView.xaml`, `Views/PackageView.xaml.cs`; assign active package and calculate dates |
-| Check-in / Check-out QR Simulation | ⬜ Pending | |
+| Check-in / Check-out QR Simulation | ✅ Done | `Services/CheckInService.cs`, `Views/CheckInView.xaml` |
 
 ## Member Self-Service
 
@@ -47,10 +47,10 @@
 
 | Feature | Status | Ghi chú |
 |---------|--------|---------|
-| PT Portfolio UI | ⬜ Pending | |
-| Smart Booking Calendar | ⬜ Pending | |
-| Overlap Conflict Check | ⬜ Pending | Logic quan trọng nhất M2 |
-| Session Deduction khi Completed | ⬜ Pending | |
+| PT Portfolio UI | ✅ Done | `Services/PtService.cs`, `Views/PtPortfolioView.xaml` |
+| Smart Booking Calendar | ✅ Done | `Views/BookingView.xaml`, `Services/BookingService.cs`; filters PT by Specialty |
+| Overlap Conflict Check | ✅ Done | `BookingService.CreateAsync` |
+| Session Deduction khi Completed | ✅ Done | `BookingService.UpdateStatusAsync` |
 
 ## Module 3 — Equipment & Maintenance
 

@@ -3,12 +3,12 @@ using System.Windows;
 using System.Windows.Controls;
 using GymManagement.Models;
 using GymManagement.Services;
-using Microsoft.EntityFrameworkCore;
 
 namespace GymManagement.Views;
 
 public partial class MemberView : UserControl
 {
+    private readonly MemberService _memberService = new();
     private readonly ObservableCollection<Member> _members = new();
     private Member? _editingMember;
 
@@ -22,13 +22,15 @@ public partial class MemberView : UserControl
     private async Task LoadMembersAsync()
     {
         _members.Clear();
-        using var db = new GymManagementDbContext();
-        var members = await db.Members.AsNoTracking().OrderBy(m => m.FullName).ToListAsync();
-        foreach (var member in members)
+        foreach (var member in await _memberService.GetMembersAsync())
             _members.Add(member);
+        ApplySearchFilter();
     }
 
     private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        => ApplySearchFilter();
+
+    private void ApplySearchFilter()
     {
         var query = SearchTextBox.Text.Trim();
         foreach (var row in MembersGrid.Items)
@@ -38,8 +40,8 @@ public partial class MemberView : UserControl
                 || member.FullName.Contains(query, StringComparison.OrdinalIgnoreCase)
                 || member.PhoneNumber.Contains(query, StringComparison.OrdinalIgnoreCase)
                 || member.MemberCode.Contains(query, StringComparison.OrdinalIgnoreCase);
-            MembersGrid.ItemContainerGenerator.ContainerFromItem(member)?.SetValue(VisibilityProperty,
-                match ? Visibility.Visible : Visibility.Collapsed);
+            MembersGrid.ItemContainerGenerator.ContainerFromItem(member)?.SetValue(
+                VisibilityProperty, match ? Visibility.Visible : Visibility.Collapsed);
         }
     }
 
@@ -72,55 +74,32 @@ public partial class MemberView : UserControl
         if (MessageBox.Show($"Delete {selected.FullName}?", "Members", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
             return;
 
-        using var db = new GymManagementDbContext();
-        var member = await db.Members.FindAsync(selected.Id);
-        if (member == null) return;
-        db.Members.Remove(member);
-        await db.SaveChangesAsync();
+        var error = await _memberService.DeleteAsync(selected.Id);
+        if (error != null)
+        {
+            MessageBox.Show(error, "Members", MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
         await LoadMembersAsync();
     }
 
     private async void SaveButton_Click(object sender, RoutedEventArgs e)
     {
-        var fullName = FullNameTextBox.Text.Trim();
-        var phone = PhoneTextBox.Text.Trim();
-        if (string.IsNullOrWhiteSpace(fullName) || string.IsNullOrWhiteSpace(phone))
+        var error = await _memberService.SaveAsync(
+            _editingMember?.Id,
+            FullNameTextBox.Text,
+            PhoneTextBox.Text,
+            EmailTextBox.Text,
+            GenderComboBox.Text);
+
+        if (error != null)
         {
-            MessageBox.Show("Full name and phone are required.", "Members", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show(error, "Members", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
 
-        using var db = new GymManagementDbContext();
-        if (await db.Members.AnyAsync(m => m.PhoneNumber == phone && (_editingMember == null || m.Id != _editingMember.Id)))
-        {
-            MessageBox.Show("Phone number already belongs to another member.", "Members", MessageBoxButton.OK, MessageBoxImage.Warning);
-            return;
-        }
-
-        if (_editingMember == null)
-        {
-            db.Members.Add(new Member
-            {
-                MemberCode = await GenerateMemberCodeAsync(db),
-                FullName = fullName,
-                PhoneNumber = phone,
-                Email = NullIfEmpty(EmailTextBox.Text),
-                Gender = NullIfEmpty(GenderComboBox.Text),
-                RegistrationDate = DateOnly.FromDateTime(DateTime.Today)
-            });
-        }
-        else
-        {
-            var member = await db.Members.FindAsync(_editingMember.Id);
-            if (member == null) return;
-            member.FullName = fullName;
-            member.PhoneNumber = phone;
-            member.Email = NullIfEmpty(EmailTextBox.Text);
-            member.Gender = NullIfEmpty(GenderComboBox.Text);
-        }
-
-        await db.SaveChangesAsync();
         EditorPanel.Visibility = Visibility.Collapsed;
+        _editingMember = null;
         await LoadMembersAsync();
     }
 
@@ -138,19 +117,5 @@ public partial class MemberView : UserControl
         PhoneTextBox.Clear();
         EmailTextBox.Clear();
         GenderComboBox.SelectedIndex = -1;
-    }
-
-    private static string? NullIfEmpty(string value)
-        => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
-
-    private static async Task<string> GenerateMemberCodeAsync(GymManagementDbContext db)
-    {
-        string code;
-        do
-        {
-            code = $"MB{Guid.NewGuid():N}"[..14].ToUpperInvariant();
-        }
-        while (await db.Members.AnyAsync(m => m.MemberCode == code));
-        return code;
     }
 }

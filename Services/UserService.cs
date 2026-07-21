@@ -75,6 +75,30 @@ public class UserService
         return null;
     }
 
+    public async Task<string?> ChangePasswordAsync(int userId, string currentPassword, string newPassword, string confirmation)
+    {
+        if (string.IsNullOrWhiteSpace(currentPassword) || string.IsNullOrWhiteSpace(newPassword))
+            return "Current and new passwords are required.";
+
+        if (newPassword.Length < 6)
+            return "New password must contain at least 6 characters.";
+
+        if (newPassword != confirmation)
+            return "Password confirmation does not match.";
+
+        using var db = new GymManagementDbContext();
+        var user = await db.Users.FindAsync(userId);
+        if (user == null)
+            return "User account was not found.";
+
+        if (!BCrypt.Net.BCrypt.Verify(currentPassword, user.Password))
+            return "Current password is incorrect.";
+
+        user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
+        await db.SaveChangesAsync();
+        return null;
+    }
+
     private static async Task<string> GenerateMemberCodeAsync(GymManagementDbContext db)
     {
         string code;
