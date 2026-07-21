@@ -57,9 +57,9 @@
 
 | Feature | Status | Ghi chú |
 |---------|--------|---------|
-| Inventory Tracking CRUD | ⬜ Pending | |
-| Issue Report → auto Broken | ⬜ Pending | |
-| Repair Lifecycle → auto Operational | ⬜ Pending | |
+| Inventory Tracking CRUD | ✅ Done | `Services/EquipmentService.cs`, `Views/EquipmentView.xaml`; Admin only |
+| Issue Report → auto Broken | ✅ Done | Admin/Receptionist |
+| Repair Lifecycle → auto Operational | ✅ Done | Admin only for lifecycle changes |
 
 ## Module 4 — POS & Invoicing
 
@@ -74,10 +74,10 @@
 | Feature | Status | Ghi chú |
 |---------|--------|---------|
 | RBAC Login (BCrypt) + Route by Role | ✅ Done | `Services/UserSession.cs`, `Services/UserService.cs`, `MainWindow.xaml.cs`; role guards and role-based view routing |
-| Dual-Type Feedback | ⬜ Pending | |
-| Dashboard — Revenue Bar Chart | ⬜ Pending | |
-| Dashboard — Package Pie Chart | ⬜ Pending | |
-| Dashboard — Avg Training Hours | ⬜ Pending | |
+| Dual-Type Feedback | ✅ Done | PT và phòng tập; cả hai dùng số sao + comment |
+| Dashboard — Revenue Bar Chart | ✅ Done | `DashboardService`, `DashboardView`; grouped by payment method |
+| Dashboard — Package Pie Chart | ✅ Done | Package sales summary from invoice details |
+| Dashboard — Avg Training Hours | ✅ Done | Average check-in duration |
 
 ---
 

@@ -14,9 +14,8 @@
 
 ### Facility Feedback
 - `FeedbackType = 'Facility'`
-- Member báo lỗi thiết bị: `Comment` mô tả vấn đề
-- Link `EquipmentId` → `Equipments.Id`
-- `RatingStars` = NULL (không áp dụng)
+- Member đánh giá tổng thể phòng tập bằng `RatingStars` (1–5) + `Comment`
+- Không gắn feedback với từng thiết bị (`EquipmentId = NULL`)
 
 ## 2. Role-Based Access Control (RBAC)
 

@@ -1,28 +1,8 @@
-<UserControl x:Class="GymManagement.Views.EquipmentView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Grid Margin="16">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <TextBlock Text="Equipment" FontSize="24" FontWeight="SemiBold" Margin="0,0,0,16"/>
-        <DockPanel Grid.Row="1" Margin="0,0,0,12">
-            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                <Button Content="Add" Width="90" Margin="8,0,0,0"/>
-                <Button Content="Edit" Width="90" Margin="8,0,0,0"/>
-                <Button Content="Maintain" Width="90" Margin="8,0,0,0"/>
-            </StackPanel>
-            <TextBox Height="34" Width="280" VerticalContentAlignment="Center" Padding="10,0" Text="Search equipment"/>
-        </DockPanel>
-        <DataGrid Grid.Row="2" AutoGenerateColumns="False" CanUserAddRows="False">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Equipment" Width="*" Binding="{Binding Name}"/>
-                <DataGridTextColumn Header="Type" Width="160" Binding="{Binding Type}"/>
-                <DataGridTextColumn Header="Condition" Width="140" Binding="{Binding Condition}"/>
-                <DataGridTextColumn Header="Status" Width="120" Binding="{Binding Status}"/>
-            </DataGrid.Columns>
-        </DataGrid>
+<UserControl x:Class="GymManagement.Views.EquipmentView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="16"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+        <TextBlock Text="Thiết bị" FontSize="24" FontWeight="SemiBold" Margin="0,0,0,16"/>
+        <DockPanel Grid.Row="1" Margin="0,0,0,12"><StackPanel DockPanel.Dock="Right" Orientation="Horizontal"><Button x:Name="AddButton" Content="Thêm" Width="80" Margin="8,0,0,0" Click="AddButton_Click"/><Button x:Name="EditButton" Content="Sửa" Width="80" Margin="8,0,0,0" Click="EditButton_Click"/><Button x:Name="ReportButton" Content="Báo hỏng" Width="90" Margin="8,0,0,0" Click="ReportButton_Click"/><Button x:Name="MaintainButton" Content="Bảo trì" Width="80" Margin="8,0,0,0" Click="MaintainButton_Click"/><Button x:Name="CompleteRepairButton" Content="Sửa xong" Width="90" Margin="8,0,0,0" Click="CompleteRepairButton_Click"/></StackPanel><StackPanel Orientation="Horizontal"><TextBox x:Name="SearchTextBox" Height="34" Width="220" TextChanged="SearchTextBox_TextChanged"/><ComboBox x:Name="StatusFilterComboBox" Width="150" Margin="8,0,0,0" SelectionChanged="Filter_SelectionChanged"/><ComboBox x:Name="TypeFilterComboBox" Width="150" Margin="8,0,0,0" SelectionChanged="Filter_SelectionChanged"/><ComboBox x:Name="LocationFilterComboBox" Width="150" Margin="8,0,0,0" SelectionChanged="Filter_SelectionChanged"/></StackPanel></DockPanel>
+        <Border Grid.Row="2" x:Name="EditorPanel" Visibility="Collapsed" BorderBrush="#DDD" BorderThickness="1" Padding="10" Margin="0,0,0,10"><StackPanel Orientation="Horizontal"><TextBox x:Name="CodeTextBox" Width="110" Margin="0,0,6,0"/><TextBox x:Name="NameTextBox" Width="160" Margin="0,0,6,0"/><TextBox x:Name="TypeTextBox" Width="120" Margin="0,0,6,0"/><TextBox x:Name="LocationTextBox" Width="120" Margin="0,0,6,0"/><DatePicker x:Name="PurchaseDatePicker" Width="130"/><Button Content="Lưu" Width="70" Margin="6,0,0,0" Click="SaveButton_Click"/></StackPanel></Border>
+        <DataGrid x:Name="EquipmentGrid" Grid.Row="3" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"><DataGrid.Columns><DataGridTextColumn Header="Mã" Width="120" Binding="{Binding EquipmentCode}"/><DataGridTextColumn Header="Tên" Width="*" Binding="{Binding EquipmentName}"/><DataGridTextColumn Header="Loại" Width="140" Binding="{Binding EquipmentType}"/><DataGridTextColumn Header="Vị trí" Width="140" Binding="{Binding Location}"/><DataGridTextColumn Header="Trạng thái" Width="140" Binding="{Binding Status}"/></DataGrid.Columns></DataGrid>
     </Grid>
 </UserControl>

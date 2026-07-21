@@ -69,6 +69,12 @@ namespace GymManagement
             WorkspaceBar.Visibility = Visibility.Visible;
         }
 
+        public void OpenFeedbackView()
+        {
+            ContentHost.Content = new FeedbackSubmitView();
+            WorkspaceBar.Visibility = Visibility.Visible;
+        }
+
         public void OpenPtPortfolioView()
         {
             ContentHost.Content = new PtPortfolioView();
@@ -111,6 +117,17 @@ namespace GymManagement
                 return;
             }
             ContentHost.Content = new PosView();
+            WorkspaceBar.Visibility = Visibility.Visible;
+        }
+
+        private void EquipmentButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!UserSession.Instance.CanManageMembers)
+            {
+                MessageBox.Show("Chỉ Admin và Receptionist được sử dụng quản lý thiết bị.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            ContentHost.Content = new EquipmentView();
             WorkspaceBar.Visibility = Visibility.Visible;
         }
 

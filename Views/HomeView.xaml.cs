@@ -50,6 +50,9 @@ public partial class HomeView : UserControl
     private void MyCartMenuItem_Click(object sender, RoutedEventArgs e)
         => (Window.GetWindow(this) as MainWindow)?.OpenMyCartView();
 
+    private void FeedbackMenuItem_Click(object sender, RoutedEventArgs e)
+        => (Window.GetWindow(this) as MainWindow)?.OpenFeedbackView();
+
     private void PtButton_Click(object sender, RoutedEventArgs e)
         => (Window.GetWindow(this) as MainWindow)?.OpenPtPortfolioView();
 

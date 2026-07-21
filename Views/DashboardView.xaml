@@ -1,51 +1,7 @@
-<UserControl x:Class="GymManagement.Views.DashboardView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Grid Margin="16">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-
-        <TextBlock Text="Dashboard" FontSize="24" FontWeight="SemiBold" Margin="0,0,0,16"/>
-
-        <UniformGrid Grid.Row="1" Columns="3" Rows="2">
-            <Border Background="White" BorderBrush="#E5E7EB" BorderThickness="1" Padding="18" Margin="0,0,12,12">
-                <StackPanel>
-                    <TextBlock Text="Members" Foreground="#6B7280"/>
-                    <TextBlock Text="0" FontSize="32" FontWeight="SemiBold"/>
-                </StackPanel>
-            </Border>
-            <Border Background="White" BorderBrush="#E5E7EB" BorderThickness="1" Padding="18" Margin="0,0,12,12">
-                <StackPanel>
-                    <TextBlock Text="Active packages" Foreground="#6B7280"/>
-                    <TextBlock Text="0" FontSize="32" FontWeight="SemiBold"/>
-                </StackPanel>
-            </Border>
-            <Border Background="White" BorderBrush="#E5E7EB" BorderThickness="1" Padding="18" Margin="0,0,0,12">
-                <StackPanel>
-                    <TextBlock Text="Today bookings" Foreground="#6B7280"/>
-                    <TextBlock Text="0" FontSize="32" FontWeight="SemiBold"/>
-                </StackPanel>
-            </Border>
-            <Border Background="White" BorderBrush="#E5E7EB" BorderThickness="1" Padding="18" Margin="0,0,12,0">
-                <StackPanel>
-                    <TextBlock Text="Revenue" Foreground="#6B7280"/>
-                    <TextBlock Text="0 VND" FontSize="32" FontWeight="SemiBold"/>
-                </StackPanel>
-            </Border>
-            <Border Background="White" BorderBrush="#E5E7EB" BorderThickness="1" Padding="18" Margin="0,0,12,0">
-                <StackPanel>
-                    <TextBlock Text="Equipment" Foreground="#6B7280"/>
-                    <TextBlock Text="0" FontSize="32" FontWeight="SemiBold"/>
-                </StackPanel>
-            </Border>
-            <Border Background="White" BorderBrush="#E5E7EB" BorderThickness="1" Padding="18">
-                <StackPanel>
-                    <TextBlock Text="Feedback" Foreground="#6B7280"/>
-                    <TextBlock Text="0" FontSize="32" FontWeight="SemiBold"/>
-                </StackPanel>
-            </Border>
-        </UniformGrid>
-    </Grid>
+<UserControl x:Class="GymManagement.Views.DashboardView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="24">
+        <DockPanel Margin="0,0,0,18"><TextBlock Text="Dashboard" FontSize="28" FontWeight="SemiBold"/><StackPanel DockPanel.Dock="Right" Orientation="Horizontal"><DatePicker x:Name="FromDatePicker" Width="130"/><TextBlock Text=" đến " VerticalAlignment="Center" Margin="6,0"/><DatePicker x:Name="ToDatePicker" Width="130"/><Button Content="Lọc" Width="70" Margin="8,0,0,0" Click="FilterButton_Click"/></StackPanel></DockPanel>
+        <UniformGrid Columns="4" Margin="0,0,0,18"><Border Background="#E8F5E9" Padding="16" Margin="4"><StackPanel><TextBlock Text="Tổng hội viên"/><TextBlock x:Name="TotalMembersText" FontSize="26" FontWeight="Bold"/></StackPanel></Border><Border Background="#E3F2FD" Padding="16" Margin="4"><StackPanel><TextBlock Text="Hội viên có gói"/><TextBlock x:Name="ActiveMembersText" FontSize="26" FontWeight="Bold"/></StackPanel></Border><Border Background="#FFF3E0" Padding="16" Margin="4"><StackPanel><TextBlock Text="Booking chờ xử lý"/><TextBlock x:Name="PendingBookingsText" FontSize="26" FontWeight="Bold"/></StackPanel></Border><Border Background="#FFEBEE" Padding="16" Margin="4"><StackPanel><TextBlock Text="Thiết bị hỏng"/><TextBlock x:Name="BrokenEquipmentText" FontSize="26" FontWeight="Bold"/></StackPanel></Border></UniformGrid>
+        <UniformGrid Columns="3"><Border BorderBrush="#DDD" BorderThickness="1" Padding="16" Margin="4"><StackPanel><TextBlock Text="Doanh thu" FontSize="18" FontWeight="SemiBold"/><TextBlock x:Name="RevenueText" FontSize="24" Margin="0,12,0,0"/><TextBlock x:Name="AverageTrainingText" Margin="0,8,0,0"/></StackPanel></Border><Border BorderBrush="#DDD" BorderThickness="1" Padding="16" Margin="4"><StackPanel><TextBlock Text="Doanh thu theo phương thức" FontSize="18" FontWeight="SemiBold"/><ItemsControl x:Name="RevenueByPaymentList" Margin="0,12,0,0"/></StackPanel></Border><Border BorderBrush="#DDD" BorderThickness="1" Padding="16" Margin="4"><StackPanel><TextBlock Text="Package bán chạy" FontSize="18" FontWeight="SemiBold"/><ItemsControl x:Name="PackageSalesList" Margin="0,12,0,0"/></StackPanel></Border></UniformGrid>
+    </StackPanel></ScrollViewer>
 </UserControl>
