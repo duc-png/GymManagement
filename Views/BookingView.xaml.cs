@@ -181,6 +181,13 @@ public partial class BookingView : UserControl
         _selectedDate = startTime.Date;
         _displayedMonth = new DateTime(startTime.Year, startTime.Month, 1);
         await LoadAsync();
+        MessageBox.Show(
+            bookingType == "Package"
+                ? "Đặt lịch thành công. Gói tập đã được trừ 1 buổi PT."
+                : "Đặt lịch thành công. Vui lòng thanh toán booking trong giỏ hàng.",
+            "Đặt lịch PT",
+            MessageBoxButton.OK,
+            MessageBoxImage.Information);
     }
 
     private async void CompleteButton_Click(object sender, RoutedEventArgs e)

@@ -36,11 +36,11 @@
 
 | Feature | Status | Ghi chú |
 |---------|--------|---------|
-| Account menu | ✅ Done | `Views/HomeView.xaml` |
+| Member navigation | ✅ Done | Workspace menu có Gói tập, Lịch PT, Giỏ hàng, Lịch sử mua hàng, Đánh giá, tài khoản và mật khẩu |
 | Personal profile (email read-only) | ✅ Done | `Views/ProfileWindow.xaml` |
 | Change password (BCrypt) | ✅ Done | `Views/ChangePasswordWindow.xaml` |
 | Purchase history | ✅ Done | `Views/PurchaseHistoryWindow.xaml` |
-| Cart | ✅ Done | Persistent SQL cart; package and extra PT booking checkout |
+| Cart | ✅ Done | Persistent SQL cart; Member mua sản phẩm, gói tập và thanh toán booking PT mua thêm |
 | My packages | ✅ Done | Filter all/active/expired; price and PT sessions |
 | My PT schedule | ✅ Done | Filter by `Members.UserId` |
 
@@ -51,7 +51,7 @@
 | PT Portfolio UI | ✅ Done | `Services/PtService.cs`, `Views/PtPortfolioView.xaml` |
 | Smart Booking Calendar | ✅ Done | PT chỉ xem lịch dạy của chính mình; Member chỉ xem lịch đã thuê của chính mình; chọn ngày xem chi tiết |
 | Overlap Conflict Check | ✅ Done | `BookingService.CreateAsync` |
-| Session Deduction khi Completed | ✅ Done | `BookingService.UpdateStatusAsync` |
+| PT Session Reservation | ✅ Done | Đặt lịch trừ buổi ngay; hủy hoàn buổi; chỉ hoàn thành sau giờ kết thúc lịch và không trừ lần hai |
 | PT Self-Service Profile | ✅ Done | Update profile, specialty, status, avatar and password; portfolio tự làm mới và hiển thị ảnh |
 
 ## Module 3 — Equipment & Maintenance
@@ -76,7 +76,7 @@
 | Feature | Status | Ghi chú |
 |---------|--------|---------|
 | RBAC Login (BCrypt) + Route by Role | ✅ Done | Admin vào Dashboard và chỉ hiện Dashboard/Thiết bị/Sản phẩm; các role khác dùng menu riêng |
-| Dual-Type Feedback | ✅ Done | PT và phòng tập; cả hai dùng số sao + comment |
+| Dual-Type Feedback | ✅ Done | Phòng tập: đã mua gói; PT: booking đã thanh toán (nếu mua thêm) và Receptionist xác nhận hoàn thành |
 | Dashboard — Revenue Bar Chart | ✅ Done | `DashboardService`, `DashboardView`; grouped by payment method |
 | Dashboard — Package Pie Chart | ✅ Done | Package sales summary from invoice details |
 | Dashboard — Avg Training Hours | ✅ Done | Average check-in duration |

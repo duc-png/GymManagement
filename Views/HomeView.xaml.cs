@@ -18,6 +18,7 @@ public partial class HomeView : UserControl
     {
         var user = UserSession.Instance.CurrentUser;
         LoginText.Text = user?.FullName ?? "Đăng nhập";
+        FeedbackMenuItem.Visibility = user?.Role == UserRoles.Member ? Visibility.Visible : Visibility.Collapsed;
 
         try
         {
@@ -52,6 +53,7 @@ public partial class HomeView : UserControl
 
         var user = UserSession.Instance.CurrentUser!;
         LoginText.Text = user.FullName;
+        FeedbackMenuItem.Visibility = user.Role == UserRoles.Member ? Visibility.Visible : Visibility.Collapsed;
 
         if (user.Role is UserRoles.Admin or UserRoles.Receptionist or UserRoles.Pt)
             (Window.GetWindow(this) as MainWindow)?.NavigateForRole(user.Role);
@@ -99,26 +101,21 @@ public partial class HomeView : UserControl
         => (Window.GetWindow(this) as MainWindow)?.OpenMyCartView();
 
     private void FeedbackMenuItem_Click(object sender, RoutedEventArgs e)
-        => (Window.GetWindow(this) as MainWindow)?.OpenFeedbackView();
-
-    private void PtButton_Click(object sender, RoutedEventArgs e)
-        => (Window.GetWindow(this) as MainWindow)?.OpenPtPortfolioView();
-
-    private void GymInfoButton_Click(object sender, RoutedEventArgs e)
-        => MessageBox.Show("Gym Master mở cửa từ 06:00 đến 22:00 mỗi ngày.", "Thông tin phòng tập", MessageBoxButton.OK, MessageBoxImage.Information);
-
-    private void ToolsButton_Click(object sender, RoutedEventArgs e)
     {
-        if (!UserSession.Instance.IsLoggedIn)
+        if (!UserSession.Instance.IsInRole(UserRoles.Member))
         {
-            MessageBox.Show("Vui lòng đăng nhập để sử dụng chức năng này.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Chỉ hội viên được gửi đánh giá.", "Đánh giá", MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
-        (Window.GetWindow(this) as MainWindow)?.OpenBookingView();
+
+        (Window.GetWindow(this) as MainWindow)?.OpenFeedbackView();
     }
 
-    private void ProductsButton_Click(object sender, RoutedEventArgs e)
-        => MessageBox.Show("Chức năng sản phẩm bổ sung đang được hoàn thiện.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+    private void PtSectionButton_Click(object sender, RoutedEventArgs e)
+        => PtSection.BringIntoView();
+
+    private void FeedbackSectionButton_Click(object sender, RoutedEventArgs e)
+        => FeedbackSection.BringIntoView();
 
     private void PtCardBookButton_Click(object sender, RoutedEventArgs e)
     {
@@ -137,6 +134,7 @@ public partial class HomeView : UserControl
     private void LogoutMenuItem_Click(object sender, RoutedEventArgs e)
     {
         UserSession.Instance.Logout();
-        LoginText.Text = "Login";
+        LoginText.Text = "Đăng nhập";
+        FeedbackMenuItem.Visibility = Visibility.Collapsed;
     }
 }

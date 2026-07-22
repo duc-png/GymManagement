@@ -3,7 +3,14 @@
         <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
         <TextBlock Text="Đánh giá" FontSize="28" FontWeight="SemiBold" Margin="0,0,0,18"/>
         <StackPanel Grid.Row="1" Orientation="Horizontal"><TextBlock Text="Loại đánh giá:" VerticalAlignment="Center" Margin="0,0,12,0"/><ComboBox x:Name="TypeComboBox" Width="220" SelectionChanged="TypeComboBox_SelectionChanged"><ComboBoxItem Content="Đánh giá PT" Tag="PT"/><ComboBoxItem Content="Đánh giá phòng tập" Tag="Facility"/></ComboBox></StackPanel>
-        <StackPanel Grid.Row="2" x:Name="PtPanel" Margin="0,16,0,0"><TextBlock Text="PT"/><ComboBox x:Name="PtComboBox" DisplayMemberPath="FullName" SelectedValuePath="Id" Margin="0,4,0,0"/></StackPanel>
+        <Grid Grid.Row="2" Margin="0,16,0,0">
+            <StackPanel x:Name="PtPanel">
+                <TextBlock Text="PT đã thuê và được xác nhận hoàn thành buổi tập"/>
+                <ComboBox x:Name="PtComboBox" DisplayMemberPath="FullName" SelectedValuePath="Id" Margin="0,4,0,0"/>
+                <TextBlock Text="PT đã đánh giá sẽ không xuất hiện lại trong danh sách." Foreground="#666666" FontSize="12" Margin="0,5,0,0"/>
+            </StackPanel>
+            <TextBlock x:Name="FacilityRequirementText" Text="Bạn cần mua ít nhất một gói tập để đánh giá phòng tập." Foreground="#666666" Visibility="Collapsed"/>
+        </Grid>
         <StackPanel Grid.Row="3" Margin="0,16,0,0"><TextBlock Text="Số sao"/><ComboBox x:Name="RatingComboBox" Margin="0,4,0,0"><ComboBoxItem Content="1 sao" Tag="1"/><ComboBoxItem Content="2 sao" Tag="2"/><ComboBoxItem Content="3 sao" Tag="3"/><ComboBoxItem Content="4 sao" Tag="4"/><ComboBoxItem Content="5 sao" Tag="5"/></ComboBox><TextBlock Text="Nhận xét" Margin="0,12,0,0"/><TextBox x:Name="CommentTextBox" Height="100" TextWrapping="Wrap" AcceptsReturn="True" Margin="0,4,0,0"/></StackPanel>
         <Button Grid.Row="4" Content="Gửi đánh giá" Width="120" Height="36" HorizontalAlignment="Left" Margin="0,18,0,0" Click="SubmitButton_Click"/>
     </Grid>

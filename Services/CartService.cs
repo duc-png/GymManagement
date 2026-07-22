@@ -22,6 +22,48 @@ public class CartService
             .OrderBy(x => x.StartTime).ToListAsync();
     }
 
+    public async Task<string?> AddProductAsync(int userId, int productId, int quantity)
+    {
+        if (quantity <= 0) return "Số lượng sản phẩm phải lớn hơn 0.";
+
+        using var db = new GymManagementDbContext();
+        if (!await db.Members.AnyAsync(x => x.UserId == userId))
+            return "Chỉ tài khoản hội viên được mua sản phẩm qua giỏ hàng.";
+
+        var product = await db.Products.SingleOrDefaultAsync(x => x.Id == productId);
+        if (product == null) return "Không tìm thấy sản phẩm.";
+        if ((product.StockQuantity ?? 0) <= 0) return "Sản phẩm đã hết hàng.";
+
+        var existingItem = await db.CartItems.SingleOrDefaultAsync(x =>
+            x.UserId == userId && x.ItemType == "Product" && x.ItemId == productId);
+        var newQuantity = (existingItem?.Quantity ?? 0) + quantity;
+        if (newQuantity > product.StockQuantity)
+            return $"Sản phẩm chỉ còn {product.StockQuantity} trong kho.";
+
+        if (existingItem == null)
+        {
+            db.CartItems.Add(new CartItem
+            {
+                UserId = userId,
+                ItemType = "Product",
+                ItemId = product.Id,
+                ItemName = product.ProductName,
+                Quantity = quantity,
+                UnitPrice = product.Price,
+                CreatedDate = DateTime.Now
+            });
+        }
+        else
+        {
+            existingItem.Quantity = newQuantity;
+            existingItem.ItemName = product.ProductName;
+            existingItem.UnitPrice = product.Price;
+        }
+
+        await db.SaveChangesAsync();
+        return null;
+    }
+
     public async Task<string?> AddBookingAsync(int userId, int bookingId)
     {
         using var db = new GymManagementDbContext();

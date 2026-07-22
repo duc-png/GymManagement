@@ -27,7 +27,24 @@ public partial class MyCartView : UserControl
         TotalText.Text = $"Tổng: {_items.Sum(x => x.UnitPrice * x.Quantity):N0}đ";
         var data = await _posService.GetCatalogAsync();
         PackageComboBox.ItemsSource = data.Packages;
+        ProductComboBox.ItemsSource = data.Products.Where(x => (x.StockQuantity ?? 0) > 0).ToList();
         BookingComboBox.ItemsSource = await _cartService.GetMyPendingExtraBookingsAsync(userId.Value);
+    }
+
+    private async void AddProductButton_Click(object sender, RoutedEventArgs e)
+    {
+        var user = UserSession.Instance.CurrentUser;
+        if (user == null || ProductComboBox.SelectedValue is not int productId) return;
+        if (!int.TryParse(ProductQuantityTextBox.Text, out var quantity) || quantity <= 0)
+        {
+            MessageBox.Show("Vui lòng nhập số lượng sản phẩm hợp lệ.", "Giỏ hàng", MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+
+        var error = await _cartService.AddProductAsync(user.Id, productId, quantity);
+        if (error != null)
+            MessageBox.Show(error, "Giỏ hàng", MessageBoxButton.OK, MessageBoxImage.Warning);
+        await LoadAsync();
     }
 
     private async void AddPackageButton_Click(object sender, RoutedEventArgs e)

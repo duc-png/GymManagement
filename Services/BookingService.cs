@@ -1,5 +1,6 @@
 using GymManagement.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace GymManagement.Services;
 
@@ -82,6 +83,7 @@ public class BookingService
             return "Tài khoản PT không thể tự tạo lịch đặt.";
         }
 
+        await using var transaction = await db.Database.BeginTransactionAsync(IsolationLevel.Serializable);
         var endTime = startTime.AddMinutes(durationMinutes);
         int? memberPackageId = null;
         decimal price = 0;
@@ -89,16 +91,21 @@ public class BookingService
 
         if (bookingType == "Package")
         {
-            var package = await db.MemberPackages.Include(x => x.PackageTemplate).FirstOrDefaultAsync(x =>
-                x.MemberId == memberId && x.Status == "Active"
-                && x.StartDate <= DateOnly.FromDateTime(startTime)
-                && x.EndDate >= DateOnly.FromDateTime(startTime)
-                && (x.RemainingPtsessions ?? 0) > 0);
+            var package = await db.MemberPackages
+                .Include(x => x.PackageTemplate)
+                .Where(x => x.MemberId == memberId && x.Status == "Active"
+                    && x.StartDate <= DateOnly.FromDateTime(startTime)
+                    && x.EndDate >= DateOnly.FromDateTime(startTime)
+                    && (x.RemainingPtsessions ?? 0) > 0)
+                .OrderBy(x => x.EndDate)
+                .FirstOrDefaultAsync();
             if (package == null) return "Hội viên không có gói tập còn buổi PT trong ngày này.";
             var configuredMinutes = package.PackageTemplate?.PtminutesPerSession ?? 0;
             if (configuredMinutes > 0 && durationMinutes != configuredMinutes)
                 return $"Gói tập yêu cầu mỗi buổi PT dài {configuredMinutes} phút.";
             memberPackageId = package.Id;
+            package.RemainingPtsessions--;
+            paymentStatus = "Pending";
         }
         else if (bookingType == "Extra")
         {
@@ -130,6 +137,7 @@ public class BookingService
             MemberPackageId = memberPackageId
         });
         await db.SaveChangesAsync();
+        await transaction.CommitAsync();
         return null;
     }
 
@@ -142,15 +150,35 @@ public class BookingService
         var booking = await db.Ptbookings.FindAsync(bookingId);
         if (booking == null) return "Không tìm thấy lịch đặt.";
         if (booking.Status != "Pending") return "Chỉ có thể cập nhật lịch đang chờ xử lý.";
-        if (newStatus == "Completed" && booking.PaymentStatus != "Included" && booking.PaymentStatus != "Paid")
+        if (newStatus == "Completed" && DateTime.Now < booking.EndTime)
+            return $"Chỉ có thể hoàn thành buổi tập sau {booking.EndTime:HH:mm 'ngày' dd/MM/yyyy}.";
+        if (newStatus == "Completed" && booking.BookingType == "Extra" && booking.PaymentStatus != "Paid")
             return "Booking mua thêm chưa được thanh toán.";
 
-        if (newStatus == "Completed" && booking.BookingType == "Package")
+        if (booking.BookingType == "Package")
         {
-            var package = await db.MemberPackages.FindAsync(booking.MemberPackageId);
-            if (package == null || (package.RemainingPtsessions ?? 0) <= 0)
-                return "Không tìm thấy gói hoạt động còn buổi PT.";
-            package.RemainingPtsessions--;
+            var package = await db.MemberPackages
+                .Include(x => x.PackageTemplate)
+                .SingleOrDefaultAsync(x => x.Id == booking.MemberPackageId);
+            if (package == null) return "Không tìm thấy gói tập đã dùng để đặt lịch.";
+
+            if (newStatus == "Cancelled" && booking.PaymentStatus == "Pending")
+            {
+                var maximumSessions = package.PackageTemplate?.PtSessions;
+                var restoredSessions = (package.RemainingPtsessions ?? 0) + 1;
+                package.RemainingPtsessions = maximumSessions.HasValue
+                    ? Math.Min(restoredSessions, maximumSessions.Value)
+                    : restoredSessions;
+            }
+            else if (newStatus == "Completed" && booking.PaymentStatus == "Included")
+            {
+                if ((package.RemainingPtsessions ?? 0) <= 0)
+                    return "Gói tập không còn buổi PT để hoàn thành booking cũ.";
+                package.RemainingPtsessions--;
+            }
+
+            if (newStatus == "Completed" && booking.PaymentStatus == "Pending")
+                booking.PaymentStatus = "Included";
         }
 
         booking.Status = newStatus;

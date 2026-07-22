@@ -48,10 +48,14 @@ namespace GymManagement
 
             HomeNavButton.Content = admin ? "Dashboard" : "Home";
             HomeNavButton.Visibility = admin || receptionist || pt || member ? Visibility.Visible : Visibility.Collapsed;
+            PackagesNavButton.Content = member ? "Gói tập của tôi" : "Gói tập";
             PackagesNavButton.Visibility = receptionist || member ? Visibility.Visible : Visibility.Collapsed;
             CheckInNavButton.Visibility = receptionist ? Visibility.Visible : Visibility.Collapsed;
             PtPortfolioNavButton.Visibility = pt || member ? Visibility.Visible : Visibility.Collapsed;
             BookingsNavButton.Visibility = receptionist || pt || member ? Visibility.Visible : Visibility.Collapsed;
+            CartNavButton.Visibility = member ? Visibility.Visible : Visibility.Collapsed;
+            PurchaseHistoryNavButton.Visibility = member ? Visibility.Visible : Visibility.Collapsed;
+            FeedbackNavButton.Visibility = member ? Visibility.Visible : Visibility.Collapsed;
             PosNavButton.Visibility = receptionist ? Visibility.Visible : Visibility.Collapsed;
             EquipmentNavButton.Visibility = admin || receptionist ? Visibility.Visible : Visibility.Collapsed;
             ProductsNavButton.Visibility = admin || receptionist ? Visibility.Visible : Visibility.Collapsed;
@@ -104,6 +108,12 @@ namespace GymManagement
 
         public void OpenFeedbackView()
         {
+            if (!UserSession.Instance.IsInRole(UserRoles.Member))
+            {
+                MessageBox.Show("Chỉ hội viên được gửi đánh giá.", "Đánh giá", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
             ContentHost.Content = new FeedbackSubmitView();
             WorkspaceBar.Visibility = Visibility.Visible;
             ConfigureWorkspace(UserSession.Instance.CurrentRole);
@@ -142,6 +152,24 @@ namespace GymManagement
             }
             ContentHost.Content = new BookingView();
             WorkspaceBar.Visibility = Visibility.Visible;
+        }
+
+        private void CartButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!UserSession.Instance.IsInRole(UserRoles.Member)) return;
+            OpenMyCartView();
+        }
+
+        private void PurchaseHistoryButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!UserSession.Instance.IsInRole(UserRoles.Member)) return;
+            new PurchaseHistoryWindow { Owner = this }.ShowDialog();
+        }
+
+        private void FeedbackButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!UserSession.Instance.IsInRole(UserRoles.Member)) return;
+            OpenFeedbackView();
         }
 
         private void PosButton_Click(object sender, RoutedEventArgs e)

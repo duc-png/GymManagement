@@ -10,9 +10,28 @@ public partial class FeedbackSubmitView : UserControl
     public FeedbackSubmitView()
     {
         InitializeComponent(); TypeComboBox.SelectedIndex = 0; RatingComboBox.SelectedIndex = 4;
-        Loaded += async (_, _) => PtComboBox.ItemsSource = await _service.GetPtsAsync();
+        Loaded += async (_, _) => await LoadAsync();
     }
-    private void TypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) => PtPanel.Visibility = (TypeComboBox.SelectedItem as ComboBoxItem)?.Tag?.ToString() == "PT" ? Visibility.Visible : Visibility.Collapsed;
+
+    private async Task LoadAsync()
+    {
+        var user = UserSession.Instance.CurrentUser;
+        if (user == null || !UserSession.Instance.IsInRole(UserRoles.Member))
+        {
+            IsEnabled = false;
+            MessageBox.Show("Chỉ hội viên được gửi đánh giá.", "Đánh giá", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
+        PtComboBox.ItemsSource = await _service.GetEligiblePtsAsync(user.Id);
+    }
+    private void TypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (PtPanel == null || FacilityRequirementText == null) return;
+        var isPtFeedback = (TypeComboBox.SelectedItem as ComboBoxItem)?.Tag?.ToString() == "PT";
+        PtPanel.Visibility = isPtFeedback ? Visibility.Visible : Visibility.Collapsed;
+        FacilityRequirementText.Visibility = isPtFeedback ? Visibility.Collapsed : Visibility.Visible;
+    }
     private async void SubmitButton_Click(object sender, RoutedEventArgs e)
     {
         var user = UserSession.Instance.CurrentUser; if (user == null) return;

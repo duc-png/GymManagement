@@ -33,7 +33,7 @@
         </Style>
     </UserControl.Resources>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <ScrollViewer x:Name="HomeScrollViewer" VerticalScrollBarVisibility="Auto">
         <StackPanel>
             <Border Background="{StaticResource DarkBg}" Height="70">
                 <Grid Margin="40,0">
@@ -47,10 +47,8 @@
                         <TextBlock Text="GYM MASTER" Foreground="White" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0"/>
                     </StackPanel>
                     <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <Button Content="Thông tin phòng tập" Style="{StaticResource MenuButton}" Click="GymInfoButton_Click"/>
-                        <Button Content="Đội ngũ PT" Style="{StaticResource MenuButton}" Click="PtButton_Click"/>
-                        <Button Content="Lịch PT" Style="{StaticResource MenuButton}" Click="ToolsButton_Click"/>
-                        <Button Content="Sản phẩm" Style="{StaticResource MenuButton}" Click="ProductsButton_Click"/>
+                        <Button Content="Đội ngũ PT" Style="{StaticResource MenuButton}" Click="PtSectionButton_Click"/>
+                        <Button Content="Đánh giá" Style="{StaticResource MenuButton}" Click="FeedbackSectionButton_Click"/>
                     </StackPanel>
                     <Button x:Name="LoginButton" Grid.Column="2" Style="{StaticResource MenuButton}" VerticalAlignment="Center" Click="LoginButton_Click">
                         <Button.ContextMenu>
@@ -60,7 +58,7 @@
                                 <MenuItem Header="Lịch sử mua hàng" Click="PurchaseHistoryMenuItem_Click"/>
                                 <MenuItem Header="Gói tập của tôi" Click="MyPackagesMenuItem_Click"/>
                                 <MenuItem Header="Giỏ hàng" Click="MyCartMenuItem_Click"/>
-                                <MenuItem Header="Đánh giá" Click="FeedbackMenuItem_Click"/>
+                                <MenuItem x:Name="FeedbackMenuItem" Header="Đánh giá" Click="FeedbackMenuItem_Click"/>
                                 <MenuItem Header="Đặt lịch PT" Click="BookPtMenuItem_Click"/>
                                 <Separator/>
                                 <MenuItem Header="Đăng xuất" Click="LogoutMenuItem_Click"/>
@@ -108,7 +106,7 @@
                 </Grid>
             </Border>
 
-            <StackPanel Margin="60,52,60,44">
+            <StackPanel x:Name="PtSection" Margin="60,52,60,44">
                 <TextBlock Text="ĐỘI NGŨ HUẤN LUYỆN VIÊN" FontSize="30" FontWeight="Bold" Foreground="{StaticResource DarkBg}" HorizontalAlignment="Center"/>
                 <TextBlock Text="Thông tin và đánh giá được cập nhật trực tiếp từ hệ thống" FontSize="15" Foreground="#667085" HorizontalAlignment="Center" Margin="0,8,0,28"/>
                 <ItemsControl x:Name="PtItemsControl">
@@ -145,7 +143,7 @@
                 </ItemsControl>
             </StackPanel>
 
-            <Border Background="{StaticResource LightGray}" Padding="60,48">
+            <Border x:Name="FeedbackSection" Background="{StaticResource LightGray}" Padding="60,48">
                 <StackPanel>
                     <TextBlock Text="ĐÁNH GIÁ TỪ HỘI VIÊN" FontSize="30" FontWeight="Bold" Foreground="{StaticResource DarkBg}" HorizontalAlignment="Center"/>
                     <TextBlock Text="Những phản hồi mới nhất đã gửi trên hệ thống" FontSize="15" Foreground="#667085" HorizontalAlignment="Center" Margin="0,8,0,28"/>

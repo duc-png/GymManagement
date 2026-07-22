@@ -46,17 +46,22 @@ public class PosService
         var packageIdsInCheckout = new HashSet<int>();
         foreach (var item in items)
         {
+            if (item.Quantity <= 0) return (null, "Số lượng hàng hóa không hợp lệ.");
+            var currentUnitPrice = item.UnitPrice;
+
             if (item.ItemType == "Product")
             {
                 var product = await db.Products.FindAsync(item.ItemId);
                 if (product == null) return (null, "Không tìm thấy sản phẩm trong giỏ hàng.");
                 if ((product.StockQuantity ?? 0) < item.Quantity) return (null, $"Sản phẩm '{product.ProductName}' không đủ tồn kho.");
                 product.StockQuantity -= item.Quantity;
+                currentUnitPrice = product.Price;
             }
             else if (item.ItemType == "Package")
             {
                 var package = await db.PackageTemplates.FindAsync(item.ItemId);
                 if (package == null || memberId == null) return (null, "Không tìm thấy gói tập.");
+                currentUnitPrice = package.Price;
                 if (!packageIdsInCheckout.Add(package.Id))
                     return (null, "Không thể mua trùng một gói tập trong cùng hóa đơn.");
                 var today = DateOnly.FromDateTime(DateTime.Today);
@@ -82,18 +87,19 @@ public class PosService
                 if (memberId == null || booking.MemberId != memberId)
                     return (null, "Booking PT không thuộc hội viên đã chọn.");
                 booking.PaymentStatus = "Paid";
+                currentUnitPrice = booking.Price;
             }
             else return (null, "Loại hàng hóa không hợp lệ.");
 
-            total += item.UnitPrice * item.Quantity;
+            total += currentUnitPrice * item.Quantity;
             invoice.InvoiceDetails.Add(new InvoiceDetail
             {
                 ItemType = item.ItemType,
                 ItemId = item.ItemId,
                 ItemName = item.ItemName,
                 Quantity = item.Quantity,
-                UnitPrice = item.UnitPrice,
-                TotalPrice = item.UnitPrice * item.Quantity
+                UnitPrice = currentUnitPrice,
+                TotalPrice = currentUnitPrice * item.Quantity
             });
         }
 
