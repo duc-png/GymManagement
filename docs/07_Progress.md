@@ -77,6 +77,7 @@
 |---------|--------|---------|
 | RBAC Login (BCrypt) + Route by Role | ✅ Done | Admin vào Dashboard và chỉ hiện Dashboard/Thiết bị/Sản phẩm; các role khác dùng menu riêng |
 | Dual-Type Feedback | ✅ Done | Phòng tập: đã mua gói; PT: booking đã thanh toán (nếu mua thêm) và Receptionist xác nhận hoàn thành |
+| Feedback visibility | ✅ Done | PT xem đánh giá về mình; mọi người xem được toàn bộ đánh giá PT và phòng tập |
 | Dashboard — Revenue Bar Chart | ✅ Done | `DashboardService`, `DashboardView`; grouped by payment method |
 | Dashboard — Package Pie Chart | ✅ Done | Package sales summary from invoice details |
 | Dashboard — Avg Training Hours | ✅ Done | Average check-in duration |

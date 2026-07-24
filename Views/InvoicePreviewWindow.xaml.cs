@@ -35,6 +35,7 @@ public partial class InvoicePreviewWindow : Window
         DiscountText.Text = $"Giảm giá: {invoice.DiscountPercent ?? 0}%";
         FinalAmountText.Text = $"Thanh toán: {invoice.FinalAmount:N0}đ";
         PaymentMethodText.Text = $"Phương thức: {invoice.PaymentMethod}";
+        PaymentStatusText.Text = $"Trạng thái: {invoice.PaymentStatusDisplay}";
     }
 
     private void PrintButton_Click(object sender, RoutedEventArgs e)

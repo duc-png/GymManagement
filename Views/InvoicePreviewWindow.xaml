@@ -25,6 +25,7 @@
                         <TextBlock x:Name="DiscountText" TextAlignment="Right" Margin="0,6,0,0"/>
                         <TextBlock x:Name="FinalAmountText" TextAlignment="Right" FontSize="18" FontWeight="Bold" Margin="0,8,0,0"/>
                         <TextBlock x:Name="PaymentMethodText" TextAlignment="Right" Margin="0,8,0,0"/>
+                        <TextBlock x:Name="PaymentStatusText" TextAlignment="Right" Margin="0,6,0,0" FontWeight="SemiBold"/>
                     </StackPanel>
                     <TextBlock Text="Cảm ơn quý khách!" HorizontalAlignment="Center" Margin="0,30,0,0" FontStyle="Italic"/>
                 </StackPanel>

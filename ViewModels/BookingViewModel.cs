@@ -7,7 +7,8 @@ public sealed record BookingCalendarEntry(
     int BookingId,
     string Time,
     string Participant,
-    string Status);
+    string Status,
+    bool IsOwnBooking);
 
 public sealed record BookingCalendarDay(
     DateTime Date,
@@ -26,7 +27,9 @@ public sealed class BookingViewModel
         DateTime displayedMonth,
         DateTime selectedDate,
         IEnumerable<Ptbooking> bookings,
-        string role)
+        string role,
+        bool showBusyOnly = false,
+        IReadOnlySet<int>? ownBookingIds = null)
     {
         var monthStart = new DateTime(displayedMonth.Year, displayedMonth.Month, 1);
         var daysFromMonday = ((int)monthStart.DayOfWeek + 6) % 7;
@@ -42,7 +45,9 @@ public sealed class BookingViewModel
                 monthStart,
                 selectedDate,
                 bookingsByDate,
-                role))
+                role,
+                showBusyOnly,
+                ownBookingIds))
             .ToList();
     }
 
@@ -51,18 +56,27 @@ public sealed class BookingViewModel
         DateTime monthStart,
         DateTime selectedDate,
         IReadOnlyDictionary<DateTime, List<Ptbooking>> bookingsByDate,
-        string role)
+        string role,
+        bool showBusyOnly,
+        IReadOnlySet<int>? ownBookingIds)
     {
         bookingsByDate.TryGetValue(date.Date, out var dayBookings);
         dayBookings ??= new List<Ptbooking>();
 
         var entries = dayBookings
             .Take(VisibleEntriesPerDay)
-            .Select(x => new BookingCalendarEntry(
-                x.Id,
-                $"{x.StartTime:HH:mm}-{x.EndTime:HH:mm}",
-                GetParticipantName(x, role),
-                x.Status ?? "Pending"))
+            .Select(x =>
+            {
+                var isOwnBooking = showBusyOnly && ownBookingIds?.Contains(x.Id) == true;
+                return new BookingCalendarEntry(
+                    x.Id,
+                    $"{x.StartTime:HH:mm}-{x.EndTime:HH:mm}",
+                    showBusyOnly
+                        ? isOwnBooking ? "Lịch của bạn" : "Đã có lịch"
+                        : GetParticipantName(x, role),
+                    showBusyOnly ? "Busy" : x.Status ?? "Pending",
+                    isOwnBooking);
+            })
             .ToList();
 
         return new BookingCalendarDay(

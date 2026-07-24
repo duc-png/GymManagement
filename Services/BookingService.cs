@@ -186,4 +186,161 @@ public class BookingService
         await transaction.CommitAsync();
         return null;
     }
+
+    public async Task<string?> RescheduleAsync(
+        int currentUserId,
+        string role,
+        int bookingId,
+        DateTime newStartTime)
+    {
+        if (newStartTime <= DateTime.Now)
+            return "Thời gian mới phải ở trong tương lai.";
+
+        using var db = new GymManagementDbContext();
+        await using var transaction = await db.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+        var booking = await db.Ptbookings
+            .Include(x => x.Member)
+            .Include(x => x.Pt)
+            .SingleOrDefaultAsync(x => x.Id == bookingId);
+
+        if (booking == null)
+            return "Không tìm thấy lịch đặt.";
+        if (booking.Status != "Pending")
+            return "Chỉ có thể chuyển lịch đang chờ thực hiện.";
+        if (booking.StartTime == newStartTime)
+            return "Vui lòng chọn thời gian khác lịch hiện tại.";
+
+        var isMember = string.Equals(role, UserRoles.Member, StringComparison.OrdinalIgnoreCase);
+        var canManage = string.Equals(role, UserRoles.Admin, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(role, UserRoles.Receptionist, StringComparison.OrdinalIgnoreCase);
+        if (isMember && booking.Member?.UserId != currentUserId)
+            return "Lịch đặt này không thuộc tài khoản của bạn.";
+        if (!isMember && !canManage)
+            return "Bạn không có quyền chuyển lịch đặt này.";
+
+        var duration = booking.EndTime - booking.StartTime;
+        var newEndTime = newStartTime.Add(duration);
+
+        if (booking.BookingType == "Package")
+        {
+            var package = await db.MemberPackages
+                .SingleOrDefaultAsync(x => x.Id == booking.MemberPackageId);
+            var newDate = DateOnly.FromDateTime(newStartTime);
+            if (package == null || newDate < package.StartDate || newDate > package.EndDate)
+                return "Thời gian mới phải nằm trong thời hạn của gói tập.";
+        }
+
+        var overlaps = await db.Ptbookings.AnyAsync(x =>
+            x.Id != booking.Id
+            && x.Ptid == booking.Ptid
+            && x.Status != "Cancelled"
+            && newStartTime < x.EndTime
+            && newEndTime > x.StartTime);
+        if (overlaps)
+            return "PT đã có lịch trong khoảng thời gian mới.";
+
+        booking.StartTime = newStartTime;
+        booking.EndTime = newEndTime;
+
+        var cartItem = await db.CartItems.SingleOrDefaultAsync(x =>
+            x.ItemType == "PTBooking" && x.ItemId == booking.Id);
+        if (cartItem != null)
+            cartItem.ItemName = $"PT {booking.Pt?.FullName} - {newStartTime:g}";
+
+        await db.SaveChangesAsync();
+        await transaction.CommitAsync();
+        return null;
+    }
+
+    public async Task<List<string>> GetAvailableSlotsAsync(int bookingId, DateTime date)
+    {
+        using var db = new GymManagementDbContext();
+        var booking = await db.Ptbookings.AsNoTracking()
+            .SingleOrDefaultAsync(x => x.Id == bookingId);
+        if (booking == null || booking.Ptid == null)
+            return new List<string>();
+
+        var duration = booking.EndTime - booking.StartTime;
+        var dayStart = date.Date.AddHours(6);
+        var dayEnd = date.Date.AddHours(22);
+        var occupied = await db.Ptbookings.AsNoTracking()
+            .Where(x => x.Id != booking.Id
+                && x.Ptid == booking.Ptid
+                && x.Status != "Cancelled"
+                && x.StartTime < dayEnd
+                && x.EndTime > dayStart)
+            .Select(x => new { x.StartTime, x.EndTime })
+            .ToListAsync();
+
+        var slots = new List<string>();
+        for (var candidate = dayStart; candidate.Add(duration) <= dayEnd; candidate = candidate.AddMinutes(30))
+        {
+            var candidateEnd = candidate.Add(duration);
+            var isCurrentSlot = candidate == booking.StartTime;
+            var overlaps = occupied.Any(x => candidate < x.EndTime && candidateEnd > x.StartTime);
+            if (candidate > DateTime.Now && !isCurrentSlot && !overlaps)
+                slots.Add(candidate.ToString("HH:mm"));
+        }
+
+        return slots;
+    }
+
+    public async Task<List<string>> GetAvailableSlotsAsync(
+        int ptId,
+        DateTime date,
+        int durationMinutes)
+    {
+        if (durationMinutes <= 0)
+            return new List<string>();
+
+        using var db = new GymManagementDbContext();
+        var dayStart = date.Date.AddHours(6);
+        var dayEnd = date.Date.AddHours(22);
+        var duration = TimeSpan.FromMinutes(durationMinutes);
+        var occupied = await db.Ptbookings.AsNoTracking()
+            .Where(x => x.Ptid == ptId
+                && x.Status != "Cancelled"
+                && x.StartTime < dayEnd
+                && x.EndTime > dayStart)
+            .Select(x => new { x.StartTime, x.EndTime })
+            .ToListAsync();
+
+        var slots = new List<string>();
+        for (var candidate = dayStart; candidate.Add(duration) <= dayEnd; candidate = candidate.AddMinutes(30))
+        {
+            var candidateEnd = candidate.Add(duration);
+            var overlaps = occupied.Any(x => candidate < x.EndTime && candidateEnd > x.StartTime);
+            if (candidate > DateTime.Now && !overlaps)
+                slots.Add(candidate.ToString("HH:mm"));
+        }
+
+        return slots;
+    }
+
+    public async Task<List<Ptbooking>> GetPtScheduleAsync(int ptId, DateTime displayedMonth)
+    {
+        var monthStart = new DateTime(displayedMonth.Year, displayedMonth.Month, 1);
+        var daysFromMonday = ((int)monthStart.DayOfWeek + 6) % 7;
+        var calendarStart = monthStart.AddDays(-daysFromMonday);
+        var calendarEnd = calendarStart.AddDays(42);
+
+        using var db = new GymManagementDbContext();
+        return await db.Ptbookings.AsNoTracking()
+            .Where(x => x.Ptid == ptId
+                && x.Status != "Cancelled"
+                && x.StartTime < calendarEnd
+                && x.EndTime > calendarStart)
+            .Select(x => new Ptbooking
+            {
+                Id = x.Id,
+                Ptid = x.Ptid,
+                StartTime = x.StartTime,
+                EndTime = x.EndTime,
+                Status = x.Status,
+                BookingType = x.BookingType,
+                PaymentStatus = x.PaymentStatus
+            })
+            .OrderBy(x => x.StartTime)
+            .ToListAsync();
+    }
 }

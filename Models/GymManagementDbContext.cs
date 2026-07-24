@@ -129,6 +129,7 @@ public partial class GymManagementDbContext : DbContext
             entity.Property(e => e.CreatedDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
+            entity.Property(e => e.ConfirmedDate).HasColumnType("datetime");
             entity.Property(e => e.DiscountPercent).HasDefaultValue(0);
             entity.Property(e => e.FinalAmount).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.InvoiceCode)
@@ -137,6 +138,9 @@ public partial class GymManagementDbContext : DbContext
             entity.Property(e => e.PaymentMethod)
                 .HasMaxLength(30)
                 .HasDefaultValue("Cash");
+            entity.Property(e => e.PaymentStatus)
+                .HasMaxLength(30)
+                .HasDefaultValue("Paid");
             entity.Property(e => e.TotalAmount).HasColumnType("decimal(18, 2)");
 
             entity.HasOne(d => d.Member).WithMany(p => p.Invoices)

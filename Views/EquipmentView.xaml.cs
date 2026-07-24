@@ -60,9 +60,164 @@ public partial class EquipmentView : UserControl
     private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e) => ApplyFilter();
     private void Filter_SelectionChanged(object sender, SelectionChangedEventArgs e) { if (IsLoaded) ApplyFilter(); }
     private void AddButton_Click(object sender, RoutedEventArgs e) { _editing = null; CodeTextBox.Clear(); NameTextBox.Clear(); TypeTextBox.Clear(); LocationTextBox.Clear(); PurchaseDatePicker.SelectedDate = DateTime.Today; EditorPanel.Visibility = Visibility.Visible; }
-    private void EditButton_Click(object sender, RoutedEventArgs e) { if (EquipmentGrid.SelectedItem is not Equipment x) return; _editing = x; CodeTextBox.Text = x.EquipmentCode; NameTextBox.Text = x.EquipmentName; TypeTextBox.Text = x.EquipmentType; LocationTextBox.Text = x.Location; PurchaseDatePicker.SelectedDate = x.PurchaseDate.ToDateTime(TimeOnly.MinValue); EditorPanel.Visibility = Visibility.Visible; }
-    private async void SaveButton_Click(object sender, RoutedEventArgs e) { var user = UserSession.Instance.CurrentUser; if (user == null) return; var date = PurchaseDatePicker.SelectedDate is DateTime d ? DateOnly.FromDateTime(d) : DateOnly.FromDateTime(DateTime.Today); var error = await _service.SaveAsync(_editing?.Id, CodeTextBox.Text, NameTextBox.Text, TypeTextBox.Text, LocationTextBox.Text, date, user.Role); if (error != null) { MessageBox.Show(error, "Thiết bị", MessageBoxButton.OK, MessageBoxImage.Warning); return; } EditorPanel.Visibility = Visibility.Collapsed; await LoadAsync(); }
-    private async void ReportButton_Click(object sender, RoutedEventArgs e) { if (EquipmentGrid.SelectedItem is not Equipment x) return; var role = UserSession.Instance.CurrentUser?.Role ?? ""; var error = await _service.ReportIssueAsync(x.Id, "Báo hỏng từ hệ thống", role); if (error != null) MessageBox.Show(error, "Thiết bị", MessageBoxButton.OK, MessageBoxImage.Warning); await LoadAsync(); }
-    private async void MaintainButton_Click(object sender, RoutedEventArgs e) { if (EquipmentGrid.SelectedItem is not Equipment x) return; var role = UserSession.Instance.CurrentUser?.Role ?? ""; var error = await _service.StartMaintenanceAsync(x.Id, role); if (error != null) MessageBox.Show(error, "Thiết bị", MessageBoxButton.OK, MessageBoxImage.Warning); await LoadAsync(); }
-    private async void CompleteRepairButton_Click(object sender, RoutedEventArgs e) { if (EquipmentGrid.SelectedItem is not Equipment x) return; var user = UserSession.Instance.CurrentUser; if (user == null) return; var error = await _service.CompleteRepairAsync(x.Id, 0, user.FullName, "Hoàn tất sửa chữa từ hệ thống", user.Role); if (error != null) MessageBox.Show(error, "Thiết bị", MessageBoxButton.OK, MessageBoxImage.Warning); await LoadAsync(); }
+    private void EditButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (EquipmentGrid.SelectedItem is not Equipment equipment)
+        {
+            MessageBox.Show("Vui lòng chọn thiết bị cần sửa.", "Thiết bị", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
+        _editing = equipment;
+        CodeTextBox.Text = equipment.EquipmentCode;
+        NameTextBox.Text = equipment.EquipmentName;
+        TypeTextBox.Text = equipment.EquipmentType;
+        LocationTextBox.Text = equipment.Location;
+        PurchaseDatePicker.SelectedDate = equipment.PurchaseDate.ToDateTime(TimeOnly.MinValue);
+        EditorPanel.Visibility = Visibility.Visible;
+    }
+
+    private async void SaveButton_Click(object sender, RoutedEventArgs e)
+    {
+        var user = UserSession.Instance.CurrentUser;
+        if (user == null) return;
+
+        var isAdding = _editing == null;
+        var date = PurchaseDatePicker.SelectedDate is DateTime selectedDate
+            ? DateOnly.FromDateTime(selectedDate)
+            : DateOnly.FromDateTime(DateTime.Today);
+        var error = await _service.SaveAsync(
+            _editing?.Id,
+            CodeTextBox.Text,
+            NameTextBox.Text,
+            TypeTextBox.Text,
+            LocationTextBox.Text,
+            date,
+            user.Role);
+        if (error != null)
+        {
+            MessageBox.Show(error, "Thiết bị", MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+
+        EditorPanel.Visibility = Visibility.Collapsed;
+        MessageBox.Show(
+            isAdding ? "Thêm thiết bị thành công." : "Cập nhật thiết bị thành công.",
+            "Thiết bị",
+            MessageBoxButton.OK,
+            MessageBoxImage.Information);
+        await LoadAsync();
+    }
+    private async void ReportButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (EquipmentGrid.SelectedItem is not Equipment equipment)
+        {
+            MessageBox.Show(
+                "Vui lòng chọn thiết bị cần báo hỏng.",
+                "Báo hỏng thiết bị",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+            return;
+        }
+
+        if (equipment.Status is "Broken" or "UnderMaintenance")
+        {
+            MessageBox.Show(
+                equipment.Status == "Broken"
+                    ? "Thiết bị này đã được báo hỏng."
+                    : "Thiết bị này đang trong quá trình bảo trì.",
+                "Báo hỏng thiết bị",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+            return;
+        }
+
+        var confirmation = MessageBox.Show(
+            $"Bạn có chắc chắn muốn báo hỏng thiết bị này?\n\n" +
+            $"{equipment.EquipmentCode} - {equipment.EquipmentName}",
+            "Xác nhận báo hỏng",
+            MessageBoxButton.OKCancel,
+            MessageBoxImage.Warning);
+        if (confirmation != MessageBoxResult.OK)
+            return;
+
+        var role = UserSession.Instance.CurrentUser?.Role ?? string.Empty;
+        var error = await _service.ReportIssueAsync(
+            equipment.Id,
+            "Báo hỏng từ hệ thống",
+            role);
+        if (error != null)
+        {
+            MessageBox.Show(error, "Báo hỏng thiết bị", MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+
+        MessageBox.Show(
+            "Đã báo hỏng thiết bị thành công.",
+            "Báo hỏng thiết bị",
+            MessageBoxButton.OK,
+            MessageBoxImage.Information);
+        await LoadAsync();
+    }
+    private async void MaintainButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (EquipmentGrid.SelectedItem is not Equipment equipment)
+        {
+            MessageBox.Show("Vui lòng chọn thiết bị cần bảo trì.", "Thiết bị", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
+        var confirmation = MessageBox.Show(
+            $"Bắt đầu bảo trì thiết bị?\n\n{equipment.EquipmentCode} - {equipment.EquipmentName}",
+            "Xác nhận bảo trì",
+            MessageBoxButton.OKCancel,
+            MessageBoxImage.Question);
+        if (confirmation != MessageBoxResult.OK)
+            return;
+
+        var role = UserSession.Instance.CurrentUser?.Role ?? string.Empty;
+        var error = await _service.StartMaintenanceAsync(equipment.Id, role);
+        if (error != null)
+        {
+            MessageBox.Show(error, "Bảo trì thiết bị", MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+
+        MessageBox.Show("Thiết bị đã chuyển sang trạng thái bảo trì.", "Thiết bị", MessageBoxButton.OK, MessageBoxImage.Information);
+        await LoadAsync();
+    }
+
+    private async void CompleteRepairButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (EquipmentGrid.SelectedItem is not Equipment equipment)
+        {
+            MessageBox.Show("Vui lòng chọn thiết bị đã sửa xong.", "Thiết bị", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
+        var confirmation = MessageBox.Show(
+            $"Xác nhận thiết bị đã sửa xong?\n\n{equipment.EquipmentCode} - {equipment.EquipmentName}",
+            "Xác nhận hoàn tất sửa chữa",
+            MessageBoxButton.OKCancel,
+            MessageBoxImage.Question);
+        if (confirmation != MessageBoxResult.OK)
+            return;
+
+        var user = UserSession.Instance.CurrentUser;
+        if (user == null) return;
+        var error = await _service.CompleteRepairAsync(
+            equipment.Id,
+            0,
+            user.FullName,
+            "Hoàn tất sửa chữa từ hệ thống",
+            user.Role);
+        if (error != null)
+        {
+            MessageBox.Show(error, "Sửa chữa thiết bị", MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+
+        MessageBox.Show("Đã xác nhận sửa xong thiết bị.", "Thiết bị", MessageBoxButton.OK, MessageBoxImage.Information);
+        await LoadAsync();
+    }
 }

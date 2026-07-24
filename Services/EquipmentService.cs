@@ -36,6 +36,8 @@ public class EquipmentService
         if (string.IsNullOrWhiteSpace(description)) return "Vui lòng nhập mô tả sự cố.";
         using var db = new GymManagementDbContext(); await using var tx = await db.Database.BeginTransactionAsync();
         var equipment = await db.Equipments.FindAsync(equipmentId); if (equipment == null) return "Không tìm thấy thiết bị.";
+        if (equipment.Status == "Broken") return "Thiết bị này đã được báo hỏng.";
+        if (equipment.Status == "UnderMaintenance") return "Thiết bị này đang trong quá trình bảo trì.";
         equipment.Status = "Broken";
         db.MaintenanceHistories.Add(new MaintenanceHistory { EquipmentId = equipmentId, LogDate = DateTime.Now, LogType = "IssueReport", Description = description.Trim(), PerformedBy = role });
         await db.SaveChangesAsync(); await tx.CommitAsync(); return null;
@@ -45,6 +47,8 @@ public class EquipmentService
     {
         if (role != UserRoles.Admin) return "Chỉ Admin được bắt đầu quy trình sửa chữa.";
         using var db = new GymManagementDbContext(); var equipment = await db.Equipments.FindAsync(equipmentId); if (equipment == null) return "Không tìm thấy thiết bị.";
+        if (equipment.Status == "UnderMaintenance") return "Thiết bị này đang được bảo trì.";
+        if (equipment.Status != "Broken") return "Chỉ có thể bảo trì thiết bị đã được báo hỏng.";
         equipment.Status = "UnderMaintenance"; await db.SaveChangesAsync(); return null;
     }
 
@@ -53,6 +57,7 @@ public class EquipmentService
         if (role != UserRoles.Admin) return "Chỉ Admin được hoàn tất sửa chữa.";
         using var db = new GymManagementDbContext(); await using var tx = await db.Database.BeginTransactionAsync();
         var equipment = await db.Equipments.FindAsync(equipmentId); if (equipment == null) return "Không tìm thấy thiết bị.";
+        if (equipment.Status != "UnderMaintenance") return "Chỉ có thể xác nhận sửa xong thiết bị đang được bảo trì.";
         equipment.Status = "Operational";
         db.MaintenanceHistories.Add(new MaintenanceHistory { EquipmentId = equipmentId, LogDate = DateTime.Now, LogType = "Repair", Description = "Hoàn tất sửa chữa", Cost = cost, PerformedBy = performedBy, Notes = notes });
         await db.SaveChangesAsync(); await tx.CommitAsync(); return null;

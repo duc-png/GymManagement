@@ -117,6 +117,9 @@ public partial class HomeView : UserControl
     private void FeedbackSectionButton_Click(object sender, RoutedEventArgs e)
         => FeedbackSection.BringIntoView();
 
+    private void ViewAllFeedbackButton_Click(object sender, RoutedEventArgs e)
+        => (Window.GetWindow(this) as MainWindow)?.OpenAllFeedbackView();
+
     private void PtCardBookButton_Click(object sender, RoutedEventArgs e)
     {
         if (!UserSession.Instance.IsLoggedIn)
@@ -125,7 +128,8 @@ public partial class HomeView : UserControl
             return;
         }
 
-        (Window.GetWindow(this) as MainWindow)?.OpenBookingView();
+        var ptId = (sender as Button)?.Tag as int?;
+        (Window.GetWindow(this) as MainWindow)?.OpenBookingView(ptId);
     }
 
     private void BookPtMenuItem_Click(object sender, RoutedEventArgs e)

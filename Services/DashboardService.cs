@@ -5,7 +5,8 @@ namespace GymManagement.Services;
 
 public sealed record DashboardMetric(string Label, decimal Value);
 public sealed record DashboardData(int TotalMembers, int ActiveMembers, int PendingBookings, int BrokenEquipment,
-    decimal Revenue, List<DashboardMetric> RevenueByPayment, List<DashboardMetric> PackageSales, double AverageTrainingMinutes);
+    decimal Revenue, List<DashboardMetric> RevenueByPayment, List<DashboardMetric> PackageSales,
+    List<DashboardMetric> ProductSales, double AverageTrainingMinutes);
 
 public class DashboardService
 {
@@ -15,12 +16,17 @@ public class DashboardService
         var toExclusive = to.Date.AddDays(1);
         var invoices = await db.Invoices
             .AsNoTracking()
-            .Where(x => x.CreatedDate >= from.Date && x.CreatedDate < toExclusive)
+            .Where(x => x.PaymentStatus == PaymentStatuses.Paid
+                && (x.ConfirmedDate ?? x.CreatedDate) >= from.Date
+                && (x.ConfirmedDate ?? x.CreatedDate) < toExclusive)
             .ToListAsync();
 
         var details = await db.InvoiceDetails
             .AsNoTracking()
-            .Where(x => x.ItemType == "Package")
+            .Where(x => x.Invoice != null
+                && x.Invoice.PaymentStatus == PaymentStatuses.Paid
+                && (x.Invoice.ConfirmedDate ?? x.Invoice.CreatedDate) >= from.Date
+                && (x.Invoice.ConfirmedDate ?? x.Invoice.CreatedDate) < toExclusive)
             .ToListAsync();
 
         var checkIns = await db.CheckInHistories
@@ -50,13 +56,32 @@ public class DashboardService
             .OrderByDescending(x => x.Value)
             .ToList();
         var packageSales = details
+            .Where(x => x.ItemType == "Package")
             .GroupBy(x => x.ItemName)
             .Select(x => new DashboardMetric(x.Key, x.Sum(y => y.Quantity)))
             .OrderByDescending(x => x.Value)
+            .Take(5)
+            .ToList();
+        var productSales = details
+            .Where(x => x.ItemType == "Product")
+            .GroupBy(x => x.ItemName)
+            .Select(x => new DashboardMetric(x.Key, x.Sum(y => y.Quantity)))
+            .OrderByDescending(x => x.Value)
+            .ThenBy(x => x.Label)
+            .Take(5)
             .ToList();
             
         var averageMinutes = checkIns.Count == 0 ? 0 : checkIns
             .Average(x => (x.CheckOutTime!.Value - x.CheckInTime!.Value).TotalMinutes);
-        return new(totalMembers, activeMembers, pendingBookings, brokenEquipment, invoices.Sum(x => x.FinalAmount), revenueByPayment, packageSales, averageMinutes);
+        return new(
+            totalMembers,
+            activeMembers,
+            pendingBookings,
+            brokenEquipment,
+            invoices.Sum(x => x.FinalAmount),
+            revenueByPayment,
+            packageSales,
+            productSales,
+            averageMinutes);
     }
 }

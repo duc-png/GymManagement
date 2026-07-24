@@ -27,9 +27,17 @@ public partial class DashboardView : UserControl
         BrokenEquipmentText.Text = data.BrokenEquipment.ToString("N0");
         RevenueText.Text = $"{data.Revenue:N0}đ";
         AverageTrainingText.Text = $"Thời lượng tập trung bình: {data.AverageTrainingMinutes:N0} phút";
-        RevenueByPaymentList.ItemsSource = data.RevenueByPayment.Select(x => $"{x.Label}: {x.Value:N0}đ");
-        PackageSalesList.ItemsSource = data.PackageSales.Select(x => $"{x.Label}: {x.Value:N0} lượt");
+        RevenueByPaymentList.ItemsSource = FormatMetrics(data.RevenueByPayment, "đ");
+        PackageSalesList.ItemsSource = FormatMetrics(data.PackageSales, "lượt");
+        ProductSalesList.ItemsSource = FormatMetrics(data.ProductSales, "sản phẩm");
     }
 
     private async void FilterButton_Click(object sender, RoutedEventArgs e) => await LoadAsync();
+
+    private static IEnumerable<string> FormatMetrics(
+        IReadOnlyCollection<DashboardMetric> metrics,
+        string unit)
+        => metrics.Count == 0
+            ? new[] { "Chưa có dữ liệu" }
+            : metrics.Select(x => $"{x.Label}: {x.Value:N0} {unit}");
 }

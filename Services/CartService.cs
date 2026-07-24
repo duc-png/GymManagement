@@ -6,6 +6,7 @@ namespace GymManagement.Services;
 public class CartService
 {
     private readonly PosService _posService = new();
+    private readonly PaymentService _paymentService = new();
 
     public async Task<List<CartItem>> GetAsync(int userId)
     {
@@ -16,9 +17,19 @@ public class CartService
     public async Task<List<Ptbooking>> GetMyPendingExtraBookingsAsync(int userId)
     {
         using var db = new GymManagementDbContext();
+        var bookingsAwaitingConfirmation = db.InvoiceDetails
+            .Where(x => x.ItemType == "PTBooking"
+                && x.Invoice != null
+                && x.Invoice.Member != null
+                && x.Invoice.Member.UserId == userId
+                && (x.Invoice.PaymentStatus == PaymentStatuses.PendingCash
+                    || x.Invoice.PaymentStatus == PaymentStatuses.PendingTransfer))
+            .Select(x => x.ItemId);
+
         return await db.Ptbookings.AsNoTracking().Include(x => x.Member).Include(x => x.Pt)
             .Where(x => x.Member != null && x.Member.UserId == userId
-                && x.BookingType == "Extra" && x.PaymentStatus == "Pending" && x.Status == "Pending")
+                && x.BookingType == "Extra" && x.PaymentStatus == "Pending" && x.Status == "Pending"
+                && !bookingsAwaitingConfirmation.Contains(x.Id))
             .OrderBy(x => x.StartTime).ToListAsync();
     }
 
@@ -124,7 +135,9 @@ public class CartService
         var items = await db.CartItems.Where(x => x.UserId == userId).ToListAsync();
         if (items.Count == 0) return (null, "Giỏ hàng đang trống.");
         var posItems = items.Select(x => new PosItem(x.ItemType, x.ItemId, x.ItemName, x.UnitPrice, x.Quantity)).ToList();
-        var result = await _posService.CheckoutAsync(userId, memberId, posItems, 0, paymentMethod);
+        var result = paymentMethod is "Cash" or "Transfer"
+            ? await _paymentService.CreatePendingAsync(userId, memberId.Value, posItems, paymentMethod)
+            : await _posService.CheckoutAsync(userId, memberId, posItems, 0, paymentMethod);
         if (result.Error == null)
         {
             db.CartItems.RemoveRange(items);

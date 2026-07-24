@@ -176,6 +176,7 @@
                             </Style>
                         </ItemsControl.Style>
                     </ItemsControl>
+                    <Button Content="Xem tất cả đánh giá" Width="170" Height="36" HorizontalAlignment="Center" Margin="0,22,0,0" Click="ViewAllFeedbackButton_Click"/>
                 </StackPanel>
             </Border>
 

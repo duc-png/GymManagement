@@ -1,3 +1,4 @@
+using System.Windows;
 using System.Windows.Controls;
 using GymManagement.Services;
 
@@ -14,5 +15,15 @@ public partial class PtPortfolioView : UserControl
     }
 
     public async Task ReloadAsync()
-        => PtList.ItemsSource = await _ptService.GetPortfolioAsync();
+    {
+        var pts = await _ptService.GetPortfolioAsync();
+        PtList.ItemsSource = pts;
+        PtCountText.Text = pts.Count.ToString();
+    }
+
+    private void ViewScheduleButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button { Tag: int ptId })
+            (Window.GetWindow(this) as MainWindow)?.OpenBookingView(ptId);
+    }
 }

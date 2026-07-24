@@ -43,7 +43,9 @@
                 <Button x:Name="CartNavButton" Content="Giỏ hàng" Click="CartButton_Click" Padding="16,6" Margin="0,0,8,0"/>
                 <Button x:Name="PurchaseHistoryNavButton" Content="Lịch sử mua hàng" Click="PurchaseHistoryButton_Click" Padding="16,6" Margin="0,0,8,0"/>
                 <Button x:Name="FeedbackNavButton" Content="Đánh giá" Click="FeedbackButton_Click" Padding="16,6" Margin="0,0,8,0"/>
+                <Button x:Name="PtReceivedFeedbackNavButton" Content="Đánh giá về tôi" Click="PtReceivedFeedbackButton_Click" Padding="16,6" Margin="0,0,8,0"/>
                 <Button x:Name="PosNavButton" Content="POS" Click="PosButton_Click" Padding="16,6" Margin="0,0,8,0"/>
+                <Button x:Name="PaymentConfirmationNavButton" Content="Duyệt thanh toán" Click="PaymentConfirmationButton_Click" Padding="16,6" Margin="0,0,8,0"/>
                 <Button x:Name="EquipmentNavButton" Content="Thiết bị" Click="EquipmentButton_Click" Padding="16,6" Margin="0,0,8,0"/>
                 <Button x:Name="ProductsNavButton" Content="Sản phẩm" Click="ProductsButton_Click" Padding="16,6" Margin="0,0,8,0"/>
                 <Button x:Name="AccountNavButton" Content="Tài khoản" Click="AccountButton_Click" Padding="16,6" Margin="0,0,8,0"/>

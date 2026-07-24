@@ -47,7 +47,7 @@ namespace GymManagement
             var member = role == UserRoles.Member;
 
             HomeNavButton.Content = admin ? "Dashboard" : "Home";
-            HomeNavButton.Visibility = admin || receptionist || pt || member ? Visibility.Visible : Visibility.Collapsed;
+            HomeNavButton.Visibility = Visibility.Visible;
             PackagesNavButton.Content = member ? "Gói tập của tôi" : "Gói tập";
             PackagesNavButton.Visibility = receptionist || member ? Visibility.Visible : Visibility.Collapsed;
             CheckInNavButton.Visibility = receptionist ? Visibility.Visible : Visibility.Collapsed;
@@ -56,7 +56,9 @@ namespace GymManagement
             CartNavButton.Visibility = member ? Visibility.Visible : Visibility.Collapsed;
             PurchaseHistoryNavButton.Visibility = member ? Visibility.Visible : Visibility.Collapsed;
             FeedbackNavButton.Visibility = member ? Visibility.Visible : Visibility.Collapsed;
+            PtReceivedFeedbackNavButton.Visibility = pt ? Visibility.Visible : Visibility.Collapsed;
             PosNavButton.Visibility = receptionist ? Visibility.Visible : Visibility.Collapsed;
+            PaymentConfirmationNavButton.Visibility = receptionist ? Visibility.Visible : Visibility.Collapsed;
             EquipmentNavButton.Visibility = admin || receptionist ? Visibility.Visible : Visibility.Collapsed;
             ProductsNavButton.Visibility = admin || receptionist ? Visibility.Visible : Visibility.Collapsed;
             AccountNavButton.Visibility = pt || member ? Visibility.Visible : Visibility.Collapsed;
@@ -119,6 +121,13 @@ namespace GymManagement
             ConfigureWorkspace(UserSession.Instance.CurrentRole);
         }
 
+        public void OpenAllFeedbackView()
+        {
+            ContentHost.Content = new FeedbackView();
+            WorkspaceBar.Visibility = Visibility.Visible;
+            ConfigureWorkspace(UserSession.Instance.CurrentRole);
+        }
+
         public void OpenPtPortfolioView()
         {
             ContentHost.Content = new PtPortfolioView();
@@ -172,6 +181,14 @@ namespace GymManagement
             OpenFeedbackView();
         }
 
+        private void PtReceivedFeedbackButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!UserSession.Instance.IsInRole(UserRoles.Pt)) return;
+            ContentHost.Content = new FeedbackView(startWithOwnPtFeedback: true);
+            WorkspaceBar.Visibility = Visibility.Visible;
+            ConfigureWorkspace(UserRoles.Pt);
+        }
+
         private void PosButton_Click(object sender, RoutedEventArgs e)
         {
             if (!UserSession.Instance.CanManagePos)
@@ -180,6 +197,22 @@ namespace GymManagement
                 return;
             }
             ContentHost.Content = new PosView();
+            WorkspaceBar.Visibility = Visibility.Visible;
+        }
+
+        private void PaymentConfirmationButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!UserSession.Instance.IsInRole(UserRoles.Receptionist))
+            {
+                MessageBox.Show(
+                    "Chỉ Receptionist được xác nhận thanh toán.",
+                    "Thông báo",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+                return;
+            }
+
+            ContentHost.Content = new PaymentConfirmationView();
             WorkspaceBar.Visibility = Visibility.Visible;
         }
 
@@ -226,9 +259,9 @@ namespace GymManagement
                 new ChangePasswordWindow { Owner = this }.ShowDialog();
         }
 
-        public void OpenBookingView()
+        public void OpenBookingView(int? selectedPtId = null)
         {
-            ContentHost.Content = new BookingView();
+            ContentHost.Content = new BookingView(selectedPtId);
             WorkspaceBar.Visibility = Visibility.Visible;
             ConfigureWorkspace(UserSession.Instance.CurrentRole);
         }

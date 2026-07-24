@@ -1,5 +1,6 @@
 using GymManagement.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
 
 namespace GymManagement.Services;
 
@@ -30,9 +31,19 @@ public class UserService
 
     public async Task<string?> RegisterAsync(string fullName, string username, string password, string phoneNumber)
     {
-        if (string.IsNullOrEmpty(fullName) || string.IsNullOrEmpty(username) ||
-            string.IsNullOrEmpty(password) || string.IsNullOrEmpty(phoneNumber))
+        fullName = fullName.Trim();
+        username = username.Trim();
+        phoneNumber = phoneNumber.Trim();
+
+        if (string.IsNullOrWhiteSpace(fullName) || string.IsNullOrWhiteSpace(username) ||
+            string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(phoneNumber))
             return "Vui lòng nhập đầy đủ thông tin!";
+
+        if (username.Any(char.IsWhiteSpace))
+            return "Tên đăng nhập không được chứa khoảng trắng!";
+
+        if (!Regex.IsMatch(phoneNumber, @"^0\d{9}$"))
+            return "Số điện thoại phải gồm 10 chữ số và bắt đầu bằng số 0!";
 
         using var db = new GymManagementDbContext();
 

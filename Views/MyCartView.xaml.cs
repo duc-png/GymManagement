@@ -82,8 +82,34 @@ public partial class MyCartView : UserControl
             MessageBox.Show(result.Error, "Thanh toán", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
-        MessageBox.Show($"Thanh toán thành công: {result.Invoice!.InvoiceCode}", "Thanh toán", MessageBoxButton.OK, MessageBoxImage.Information);
-        new InvoicePreviewWindow(result.Invoice.Id) { Owner = Window.GetWindow(this) }.ShowDialog();
+        var invoice = result.Invoice!;
+        if (invoice.PaymentStatus == PaymentStatuses.Paid)
+        {
+            MessageBox.Show($"Thanh toán thành công: {invoice.InvoiceCode}", "Thanh toán", MessageBoxButton.OK, MessageBoxImage.Information);
+            new InvoicePreviewWindow(invoice.Id) { Owner = Window.GetWindow(this) }.ShowDialog();
+        }
+        else
+        {
+            MessageBox.Show(
+                $"Đã tạo yêu cầu {invoice.InvoiceCode}.\n{invoice.PaymentStatusDisplay}.",
+                "Chờ xác nhận thanh toán",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+        }
         await LoadAsync();
+    }
+
+    private void PaymentMethodComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (PaymentNoteText == null || CheckoutButton == null)
+            return;
+
+        var method = (PaymentMethodComboBox.SelectedItem as ComboBoxItem)?.Tag?.ToString();
+        PaymentNoteText.Text = method == "Transfer"
+            ? "Sau khi chuyển khoản, Receptionist sẽ kiểm tra giao dịch và xác nhận."
+            : "Bạn thanh toán tại quầy. Quyền lợi chỉ được kích hoạt sau khi Receptionist nhận tiền.";
+        CheckoutButton.Content = method == "Transfer"
+            ? "Gửi yêu cầu xác nhận"
+            : "Đăng ký trả tại quầy";
     }
 }

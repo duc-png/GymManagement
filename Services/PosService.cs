@@ -39,7 +39,10 @@ public class PosService
             MemberId = memberId,
             CreatedDate = DateTime.Now,
             DiscountPercent = discountPercent,
-            PaymentMethod = paymentMethod
+            PaymentMethod = paymentMethod,
+            PaymentStatus = PaymentStatuses.Paid,
+            ConfirmedByUserId = operatorUserId,
+            ConfirmedDate = DateTime.Now
         };
 
         decimal total = 0;
